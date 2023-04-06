@@ -1,0 +1,36 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 id="counter"></h1>
+</div>
+
+<script>
+
+    i = 0;
+    window.onload = (event) => {
+
+        //window.chrome.webview.postMessage('lantern.app.shutdown');
+        //window.chrome.webview.postMessage('lantern.window.close');
+        //window.chrome.webview.postMessage('lantern.test.block');
+        window.chrome.webview.postMessage(['lantern.app.notify', { title: 'Notify from js',info:'This is information'}]);
+
+        window.chrome.webview.addEventListener('message', arg => {
+            console.log(arg.data);
+            document.querySelector('#counter').textContent = arg.data;
+        });
+
+        send();
+    };
+
+    function send() {
+        window.chrome.webview.postMessage(i.toString());
+        i++;
+        setTimeout(send, 10)
+    }
+</script>

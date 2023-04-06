@@ -1,0 +1,24 @@
+{
+  "name": "@lantern-app/core",
+  "version": "0.1.14",
+  "license": "MIT",
+  "main": "dist/lantern.js",
+  "module": "dist/lantern.mjs",
+  "types": "dist/lantern.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "pub": "yarn publish --access public --loglevel silly"
+  },
+  "files": [
+    "dist/**/*",
+    "src/**/*",
+    "package.json"
+  ],
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.2",
+    "@types/zen-observable": "^0.8.3",
+    "tsup": "^6.7.0",
+    "typescript": "^5.0.2",
+    "zen-observable": "^0.10.0"
+  }
+}

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lantern Api Demo - Window Module</title>
+    
+    <script type="module" crossorigin src="/window/index.js"></script>
+    <link rel="modulepreload" crossorigin href="/chunk-SX5Y3YHK.js">
+  </head>
+  <body>
+    <h2><a href="/index.html">Home</a> / Window</h2>
+    <ul>
+      <li>
+        <h3>Select</h3>
+        <div>
+          <span>window:</span>
+          <select id="window-select-window-select">
+            <option value="">current</option>
+          </select>
+        </div>
+        <div>
+          <button id="window-select-refresh-button">refresh</button>
+        </div>
+        <div>
+          <span id="window-select-refresh-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Create</h3>
+        <div>
+          <span>name:</span>
+          <input id="window-create-name-input" type="text" />
+        </div>
+        <div>
+          <span>title:</span>
+          <input id="window-create-title-input" type="text" />
+        </div>
+        <div>
+          <span>url:</span>
+          <input id="window-create-url-input" type="text" value="index.html" />
+        </div>
+        <div>
+          <span>width:</span>
+          <input id="window-create-width-input" type="number" value="640" />
+        </div>
+        <div>
+          <span>height:</span>
+          <input id="window-create-height-input" type="number" value="480" />
+        </div>
+        <div>
+          <span>x:</span>
+          <input id="window-create-x-input" type="number" />
+        </div>
+        <div>
+          <span>y:</span>
+          <input id="window-create-y-input" type="number" />
+        </div>
+        <div>
+          <span>min width:</span>
+          <input id="window-create-min-width-input" type="number" />
+        </div>
+        <div>
+          <span>min height:</span>
+          <input id="window-create-min-height-input" type="number" />
+        </div>
+        <div>
+          <span>max width:</span>
+          <input id="window-create-max-width-input" type="number" />
+        </div>
+        <div>
+          <span>max height:</span>
+          <input id="window-create-max-height-input" type="number" />
+        </div>
+        <div>
+          <span>visible:</span>
+          <input id="window-create-visible-input" type="checkbox" checked />
+        </div>
+        <div>
+          <span>center:</span>
+          <input id="window-create-center-input" type="checkbox" />
+        </div>
+        <div>
+          <span>always on top:</span>
+          <input id="window-create-always-on-top-input" type="checkbox" />
+        </div>
+        <div>
+          <span>skip taskbar:</span>
+          <input id="window-create-skip-taskbar-input" type="checkbox" />
+        </div>
+        <div>
+          <span>resizeable:</span>
+          <input id="window-create-resizable-input" type="checkbox" checked />
+        </div>
+        <div>
+          <span>title bar style:</span>
+          <select id="window-create-title-bar-style-select" value="default">
+            <option value="default">default</option>
+            <option value="none">none</option>
+          </select>
+        </div>
+        <div>
+          <button id="window-create-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-create-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Drag Region</h3>
+        <div
+          lantern-drag-region
+          style="
+            height: 100px;
+            background: black;
+            color: white;
+            cursor: move;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+          "
+        >
+          <div
+            style="
+              width: 200px;
+              height: 50px;
+              background: white;
+              color: black;
+              cursor: auto;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            "
+          >
+            no dragable
+          </div>
+          <span lantern-drag-region>dragable</span>
+        </div>
+      </li>
+      <li>
+        <h3>Set Title</h3>
+        <div>
+          <span>title:</span>
+          <input id="window-set-title-title-input" type="text" />
+        </div>
+        <div>
+          <button id="window-set-title-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-set-title-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Get Title</h3>
+        <div>
+          <button id="window-get-title-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-get-title-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Set Url</h3>
+        <div>
+          <span>url:</span>
+          <input id="window-set-url-url-input" type="text" />
+        </div>
+        <div>
+          <button id="window-set-url-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-set-url-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Get Url</h3>
+        <div>
+          <button id="window-get-url-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-get-url-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Set Min Size</h3>
+        <div>
+          <span>width:</span>
+          <input id="window-set-min-size-width-input" type="number" />
+        </div>
+        <div>
+          <span>height:</span>
+          <input id="window-set-min-size-height-input" type="number" />
+        </div>
+        <div>
+          <button id="window-set-min-size-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-set-min-size-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Get Min Size</h3>
+        <div>
+          <button id="window-get-min-size-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-get-min-size-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Set Max Size</h3>
+        <div>
+          <span>width:</span>
+          <input id="window-set-max-size-width-input" type="number" />
+        </div>
+        <div>
+          <span>height:</span>
+          <input id="window-set-max-size-height-input" type="number" />
+        </div>
+        <div>
+          <button id="window-set-max-size-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-set-max-size-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Get Max Size</h3>
+        <div>
+          <button id="window-get-max-size-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-get-max-size-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Set Size</h3>
+        <div>
+          <span>width:</span>
+          <input id="window-set-size-width-input" type="number" />
+        </div>
+        <div>
+          <span>height:</span>
+          <input id="window-set-size-height-input" type="number" />
+        </div>
+        <div>
+          <button id="window-set-size-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-set-size-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Get Size</h3>
+        <div>
+          <button id="window-get-size-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-get-size-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Set Position</h3>
+        <div>
+          <span>x:</span>
+          <input id="window-set-position-x-input" type="number" />
+        </div>
+        <div>
+          <span>y:</span>
+          <input id="window-set-position-y-input" type="number" />
+        </div>
+        <div>
+          <button id="window-set-position-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-set-position-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Get Position</h3>
+        <div>
+          <button id="window-get-position-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-get-position-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Set Always On Top</h3>
+        <div>
+          <span>always on top:</span>
+          <input
+            id="window-set-always-on-top-always-on-top-input"
+            type="checkbox"
+          />
+        </div>
+        <div>
+          <button id="window-set-always-on-top-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-set-always-on-top-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Is Always On Top</h3>
+        <div>
+          <button id="window-is-always-on-top-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-is-always-on-top-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Close</h3>
+        <div>
+          <button id="window-close-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-close-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Hide</h3>
+        <div>
+          <button id="window-hide-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-hide-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Show</h3>
+        <div>
+          <button id="window-show-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-show-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Is Visible</h3>
+        <div>
+          <button id="window-is-visible-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-is-visible-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Activate</h3>
+        <div>
+          <button id="window-activate-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-activate-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Is Active</h3>
+        <div>
+          <button id="window-is-active-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-is-active-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Center</h3>
+        <div>
+          <button id="window-center-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-center-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Maximize</h3>
+        <div>
+          <button id="window-maximize-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-maximize-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Is Maximized</h3>
+        <div>
+          <button id="window-is-maximized-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-is-maximized-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Minimize</h3>
+        <div>
+          <button id="window-minimize-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-minimize-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Is Minimized</h3>
+        <div>
+          <button id="window-is-minimized-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-is-minimized-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Restore</h3>
+        <div>
+          <button id="window-restore-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-restore-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Full Screen</h3>
+        <div>
+          <button id="window-full-screen-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-full-screen-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Is Full Screen</h3>
+        <div>
+          <button id="window-is-full-screen-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-is-full-screen-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Set Skip Taskbar</h3>
+        <div>
+          <span>skip taskbar:</span>
+          <input
+            id="window-set-skip-taskbar-skip-taskbar-input"
+            type="checkbox"
+          />
+        </div>
+        <div>
+          <button id="window-set-skip-taskbar-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-set-skip-taskbar-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Is Skip Taskbar</h3>
+        <div>
+          <button id="window-is-skip-taskbar-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-is-skip-taskbar-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Set Resizable</h3>
+        <div>
+          <span>resizable:</span>
+          <input id="window-set-resizable-resizable-input" type="checkbox" />
+        </div>
+        <div>
+          <button id="window-set-resizable-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-set-resizable-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Is Resizable</h3>
+        <div>
+          <button id="window-is-resizable-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-is-resizable-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Get Title Bar Style</h3>
+        <div>
+          <button id="window-get-title-bar-style-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-get-title-bar-style-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Set Title Bar Style</h3>
+        <div>
+          <select
+            id="window-set-title-bar-style-title-bar-style-select"
+            value="default"
+          >
+            <option value="default">default</option>
+            <option value="none">none</option>
+          </select>
+        </div>
+        <div>
+          <button id="window-set-title-bar-style-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="window-set-title-bar-style-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>On Closing</h3>
+        <div>
+          <button id="window-on-closing-listen-button">lisnten</button>
+          <button id="window-on-closing-unlisten-button">unlisten</button>
+        </div>
+        <div>
+          <span id="window-on-closing-listen-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>On Closed</h3>
+        <div>
+          <button id="window-on-closed-listen-button">listen</button>
+          <button id="window-on-closed-unlisten-button">unlisten</button>
+        </div>
+        <div>
+          <span id="window-on-closed-listen-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>On Resized</h3>
+        <div>
+          <button id="window-on-resized-listen-button">listen</button>
+          <button id="window-on-resized-unlisten-button">unlisten</button>
+        </div>
+        <div>
+          <span id="window-on-resized-listen-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>On Moved</h3>
+        <div>
+          <button id="window-on-moved-listen-button">listen</button>
+          <button id="window-on-moved-unlisten-button">unlisten</button>
+        </div>
+        <div>
+          <span id="window-on-moved-listen-result"></span>
+        </div>
+      </li>
+    </ul>
+  </body>
+</html>

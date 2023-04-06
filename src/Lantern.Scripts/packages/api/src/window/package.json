@@ -1,0 +1,14 @@
+{
+  "source": "index.ts",
+  "main": "../../dist/window.cjs",
+  "module": "../../dist/window.mjs",
+  "types": "../../dist/window.d.ts",
+  "targets": {
+    "types": {
+      "sourceMap": false
+    }
+  },
+  "dependencies": {
+    "@lantern-app/core": "*"
+  }
+}

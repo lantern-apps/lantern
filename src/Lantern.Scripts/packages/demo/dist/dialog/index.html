@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lantern Api Demo - Dialog Module</title>
+    
+    <script type="module" crossorigin src="/dialog/index.js"></script>
+    <link rel="modulepreload" crossorigin href="/chunk-SX5Y3YHK.js">
+  </head>
+  <body>
+    <h2><a href="/index.html">Home</a> / Dialog</h2>
+    <ul>
+      <li>
+        <h3>Message</h3>
+        <div>
+          <span>title:</span>
+          <input id="dialog-message-title-input" type="text" />
+        </div>
+        <div>
+          <span>body:</span>
+          <input id="dialog-message-body-input" type="text" />
+        </div>
+        <div>
+          <button id="dialog-message-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="dialog-message-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Ask</h3>
+        <div>
+          <span>title:</span>
+          <input id="dialog-ask-title-input" type="text" />
+        </div>
+        <div>
+          <span>body:</span>
+          <input id="dialog-ask-body-input" type="text" />
+        </div>
+        <div>
+          <button id="dialog-ask-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="dialog-ask-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Confirm</h3>
+        <div>
+          <span>title:</span>
+          <input id="dialog-confirm-title-input" type="text" />
+        </div>
+        <div>
+          <span>body:</span>
+          <input id="dialog-confirm-body-input" type="text" />
+        </div>
+        <div>
+          <button id="dialog-confirm-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="dialog-confirm-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Open File</h3>
+        <div>
+          <span>title:</span>
+          <input id="dialog-open-file-title-input" type="text" />
+        </div>
+        <div>
+          <span>defaultPath:</span>
+          <input id="dialog-open-file-default-path-input" type="text" />
+        </div>
+        <div>
+          <span>filters:</span>
+          <textarea id="dialog-open-file-filters-textarea" rows="10" cols="40">
+[{
+  name: 'txt filter',
+  extensions: ['txt'] 
+}, { 
+  name: 'image filter', 
+  extensions: ['png', 'jpg']
+}]
+          </textarea>
+        </div>
+        <div>
+          <span>multiple:</span>
+          <input id="dialog-open-file-multiple-input" type="checkbox" />
+        </div>
+        <div>
+          <button id="dialog-open-file-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="dialog-open-file-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Open Folder</h3>
+        <div>
+          <span>title:</span>
+          <input id="dialog-open-folder-title-input" type="text" />
+        </div>
+        <div>
+          <span>defaultPath:</span>
+          <input id="dialog-open-folder-default-path-input" type="text" />
+        </div>
+        <div>
+          <span>multiple:</span>
+          <input id="dialog-open-folder-multiple-input" type="checkbox" />
+        </div>
+        <div>
+          <button id="dialog-open-folder-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="dialog-open-folder-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Save File</h3>
+        <div>
+          <span>title:</span>
+          <input id="dialog-save-file-title-input" type="text" />
+        </div>
+        <div>
+          <span>defaultPath:</span>
+          <input id="dialog-save-file-default-path-input" type="text" />
+        </div>
+        <div>
+          <span>filters:</span>
+          <textarea id="dialog-save-file-filters-textarea" rows="10" cols="40">
+[{
+  name: 'txt filter',
+  extensions: ['txt'] 
+}, { 
+  name: 'image filter', 
+  extensions: ['png', 'jpg']
+}]
+          </textarea>
+        </div>
+        <div>
+          <button id="dialog-save-file-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="dialog-save-file-invoke-result"></span>
+        </div>
+      </li>
+    </ul>
+  </body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lantern Api Demo - Tray Module</title>
+    
+    <script type="module" crossorigin src="/tray/index.js"></script>
+    <link rel="modulepreload" crossorigin href="/chunk-SX5Y3YHK.js">
+  </head>
+  <body>
+    <h2><a href="/index.html">Home</a> / Tray</h2>
+    <ul>
+      <li>
+        <h3>Set Tooltip</h3>
+        <div>
+          <span>tooltip:</span>
+          <input id="tray-set-tooltip-tooltip-input" type="text" />
+        </div>
+        <div>
+          <button id="tray-set-tooltip-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="tray-set-tooltip-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Is Visible</h3>
+        <div>
+          <button id="tray-is-visible-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="tray-is-visible-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Show</h3>
+        <div>
+          <button id="tray-show-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="tray-show-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Hide</h3>
+        <div>
+          <button id="tray-hide-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="tray-hide-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>Set Menu</h3>
+        <div>
+          <span>items:</span>
+          <textarea id="tray-set-menu-items-textarea" rows="30" cols="40">
+[{
+  id: 'a',
+  text: 'Enabled'
+}, {
+  id: 'b',
+  text: 'Disabled',
+  enabled: false
+}, {
+  type: 'separator'
+}, {
+  type: 'submenu',
+  text: 'Submenu Item',
+  items: [{
+    id: 'c',
+    text: 'Submenu Item 1'
+  }, {
+    type: 'separator'
+  }, {
+    id: 'd',
+    text: 'Submenu Item d'
+  }]
+}]
+          </textarea>
+        </div>
+        <div>
+          <button id="tray-set-menu-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="tray-set-menu-invoke-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>On Click</h3>
+        <div>
+          <button id="tray-on-click-listen-button">listen</button>
+          <button id="tray-on-click-unlisten-button">unlisten</button>
+        </div>
+        <div>
+          <span id="tray-on-click-listen-result"></span>
+        </div>
+      </li>
+      <li>
+        <h3>On Menu Item Click</h3>
+        <div>
+          <button id="tray-on-menu-item-click-listen-button">listen</button>
+          <button id="tray-on-menu-item-click-unlisten-button">unlisten</button>
+        </div>
+        <div>
+          <span id="tray-on-menu-item-click-listen-result"></span>
+        </div>
+      </li>
+    </ul>
+  </body>
+</html>

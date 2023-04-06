@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Lantern</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+</head>
+<body>
+
+    <h1>Hello Lantern</h1>
+    <div>
+        <h3>Result : </h3>
+        <div id="result"></div>
+    </div>
+    <br />
+    <div>
+        <button onclick="test()">Post Message</button>
+        <button onclick="notify('New Notification', 'Message from js')">Notify</button>
+        <button onclick="center()">Center</button>
+        <button onclick="closeWindow()">Close</button>
+        <button onclick="setState('minimized')">Set Minimized</button>
+        <button onclick="setState('maximized')">Set Maximized</button>
+        <button onclick="setState('normal')">Set Normal</button>
+        <button onclick="setTopmost(true)">Set Topmost</button>
+        <button onclick="setTopmost(false)">Reset Topmost</button>
+
+        <button onclick="listen('lantern.window.closing')">Listen closing event</button>
+        <button onclick="unlisten('lantern.window.closing')">Unlisten closing event</button>
+
+        <button onclick="listen('lantern.window.resize')">Listen resize event</button>
+        <button onclick="unlisten('lantern.window.resize')">Unlisten resize event</button>
+
+        <button onclick="getScreens()">Get Screens</button>
+        <button onclick="getAllWindows()">Get All Windows</button>
+        <button onclick="activate('no_title_bar')">Open No TitleBar Window</button>
+        <button onclick="activate('dis_resize')">Open Resize Disable Window</button>
+        <button onclick="activate('splash')">Open Splash Screen</button>
+        <button onclick="shutdown()">Shutdown</button>
+    </div>
+    <script>
+        id = 0;
+        i = 0;
+
+        window.chrome.webview.addEventListener('message', arg => {
+            console.log(arg.data);
+            if (arg.data.id) {
+
+            }
+            else {
+
+            }
+            document.querySelector('#result').textContent = JSON.stringify(arg.data);
+        });
+
+        console.log('hello lantern');
+
+        function test() {
+            window.chrome.webview.postMessage({
+                name: 'lantern.app.test',
+                id: getId(),
+                payload: {
+                    value: i
+                }
+            });
+            i++;
+        }
+
+        function notify(title, info) {
+            window.chrome.webview.postMessage({
+                name: 'lantern.app.sendNotify',
+                payload: {
+                    title: title,
+                    info: info
+                }
+            });
+        }
+
+        function shutdown() {
+            window.chrome.webview.postMessage({
+                name: 'lantern.app.shutdown'
+            });
+        }
+
+        function center() {
+            window.chrome.webview.postMessage({
+                name: 'lantern.window.center'
+            });
+        }
+
+        function closeWindow() {
+            window.chrome.webview.postMessage({
+                name: 'lantern.window.close',
+            });
+        }
+
+        function setState(state) {
+            window.chrome.webview.postMessage({
+                name: 'lantern.window.setState',
+                payload: {
+                    state: state
+                }
+            });
+        }
+
+        function setTopmost(value) {
+            window.chrome.webview.postMessage({
+                name: 'lantern.window.setTopmost',
+                payload: {
+                    topmost: value
+                }
+            });
+        }
+
+        function activate(name) {
+            window.chrome.webview.postMessage({
+                name: 'lantern.window.activate',
+                payload: {
+                    name: name
+                }
+            })
+        }
+
+        function listen(event) {
+            window.chrome.webview.postMessage({
+                name: 'lantern.window.listen',
+                payload: {
+                    event: event,
+                    once: false
+                }
+            });
+        }
+
+        function once(event) {
+            window.chrome.webview.postMessage({
+                name: 'lantern.window.listen',
+                payload: {
+                    event: event,
+                    once: true
+                }
+            });
+        }
+
+        function unlisten(event) {
+            window.chrome.webview.postMessage({
+                name: 'lantern.window.unlisten',
+                payload: {
+                    event: event
+                }
+            });
+        }
+
+        function getScreens() {
+            window.chrome.webview.postMessage({
+                name: 'lantern.app.getScreens',
+                id: getId()
+            });
+        }
+
+        function getAllWindows() {
+            window.chrome.webview.postMessage({
+                name: 'lantern.app.getAllWindows',
+                id: getId()
+            });
+        }
+
+
+        function getId() {
+            id++;
+            return id;
+        }
+    </script>
+</body>
+
+</html>

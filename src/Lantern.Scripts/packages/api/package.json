@@ -1,0 +1,91 @@
+{
+  "name": "@lantern-app/api",
+  "version": "0.1.16",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsup",
+    "pub": "yarn publish --access public --loglevel silly"
+  },
+  "files": [
+    "dist/**/*",
+    "src/**/*",
+    "package.json"
+  ],
+  "exports": {
+    "./app": {
+      "require": "./dist/app/index.js",
+      "import": "./dist/app/index.mjs"
+    },
+    "./clipboard": {
+      "require": "./dist/clipboard/index.js",
+      "import": "./dist/clipboard/index.mjs"
+    },
+    "./dialog": {
+      "require": "./dist/dialog/index.js",
+      "import": "./dist/dialog/index.mjs"
+    },
+    "./notification": {
+      "require": "./dist/notification/index.js",
+      "import": "./dist/notification/index.mjs"
+    },
+    "./screen": {
+      "require": "./dist/screen/index.js",
+      "import": "./dist/screen/index.mjs"
+    },
+    "./shell": {
+      "require": "./dist/shell/index.js",
+      "import": "./dist/shell/index.mjs"
+    },
+    "./tray": {
+      "require": "./dist/tray/index.js",
+      "import": "./dist/tray/index.mjs"
+    },
+    "./updater": {
+      "require": "./dist/updater/index.js",
+      "import": "./dist/updater/index.mjs"
+    },
+    "./window": {
+      "require": "./dist/window/index.js",
+      "import": "./dist/window/index.mjs"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "app": [
+        "./dist/app/index.d.ts"
+      ],
+      "clipboard": [
+        "./dist/clipboard/index.d.ts"
+      ],
+      "dialog": [
+        "./dist/dialog/index.d.ts"
+      ],
+      "notification": [
+        "./dist/notification/index.d.ts"
+      ],
+      "screen": [
+        "./dist/screen/index.d.ts"
+      ],
+      "shell": [
+        "./dist/shell/index.d.ts"
+      ],
+      "tray": [
+        "./dist/tray/index.d.ts"
+      ],
+      "updater": [
+        "./dist/updater/index.d.ts"
+      ],
+      "window": [
+        "./dist/window/index.d.ts"
+      ]
+    }
+  },
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.2",
+    "tsup": "^6.7.0",
+    "typescript": "^5.0.2"
+  },
+  "dependencies": {
+    "@lantern-app/core": "^0.1.14"
+  }
+}

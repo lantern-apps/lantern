@@ -1,0 +1,7 @@
+{
+  "name": "lantern-app",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ]
+}

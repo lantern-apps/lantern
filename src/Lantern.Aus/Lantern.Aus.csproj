@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Version>0.1.1</Version>
+		<Company>robos.cn</Company>
+		<RepositoryUrl></RepositoryUrl>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+		<PackageIcon>robos.png</PackageIcon>
+		<PackageProjectUrl>https://robos.cn</PackageProjectUrl>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<Description>.NET Automatic Update Service</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="../Lantern.Aus.Updater/bin/Release/net7.0/publish/win-x64/Lantern.Aus.Updater.exe">
+			<Link>Updater.exe</Link>
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+			<Visible>false</Visible>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Lantern.Aus.Common\Lantern.Aus.Common.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\robos.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+	<Target Name="PushNugetPackage" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release'">
+		<Exec Command="call ..\nuget-publish.bat" />
+	</Target>
+
+</Project>

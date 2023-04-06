@@ -1,0 +1,16 @@
+{
+  "n": "UT",
+  "v": "3.0.6",
+  "f": [
+    {
+      "n": "UTService.dll",
+      "h": "M7UyEQpCBnW6J0NzbqzB4A==",
+      "s": 13312
+    },
+    {
+      "n": "UTService.exe",
+      "h": "cPWF48Pc5pFiOI43c\u002Bs0EQ==",
+      "s": 153600
+    }
+  ]
+}

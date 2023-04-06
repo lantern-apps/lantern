@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Lantern</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+</head>
+<body>
+
+    <h1>Hello Lantern</h1>
+    <h1>Starting</h1>
+    <div id="drag" style="height:300px;width:300px;background-color:gray" onmousedown="mousedown()">
+
+    </div>
+    <script>
+
+        setTimeout(start, 5000);
+
+        function start() {
+            //启动窗口
+            window.chrome.webview.postMessage({
+                name: 'lantern.window.activate',
+                args: {
+                    name: 'main'
+                }
+            });
+
+            //关闭当前
+            window.chrome.webview.postMessage({
+                name: 'lantern.window.close'
+            });
+        }
+
+        function mousedown() {
+            window.chrome.webview.postMessage({
+                name: 'lantern.window.dragmove'
+            });
+        }
+    </script>
+</body>
+
+</html>

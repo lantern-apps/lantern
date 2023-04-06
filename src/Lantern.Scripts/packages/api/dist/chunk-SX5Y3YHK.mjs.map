@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/utils.ts"],"sourcesContent":["import lantern from \"@lantern-app/core\";\r\n\r\nexport function throwErrorIfNoLantern() {\r\n  if (!lantern) {\r\n    throw new Error(\"lantern is not exists\");\r\n  }\r\n}\r\n"],"mappings":";AAAA,OAAO,aAAa;AAEb,SAAS,wBAAwB;AACtC,MAAI,CAAC,SAAS;AACZ,UAAM,IAAI,MAAM,uBAAuB;AAAA,EACzC;AACF;","names":[]}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lantern Api Demo - Notification Module</title>
+    <script type="module" src="index.ts"></script>
+  </head>
+  <body>
+    <h2><a href="/index.html">Home</a> / Notification</h2>
+    <ul>
+      <li>
+        <h3>Send</h3>
+        <div>
+          <span>title:</span>
+          <input id="notification-send-title-input" type="text" />
+        </div>
+        <div>
+          <span>body:</span>
+          <input
+            id="notification-send-body-input"
+            style="width: 300px"
+            type="text"
+          />
+        </div>
+        <div>
+          <button id="notification-send-invoke-button">invoke</button>
+        </div>
+        <div>
+          <span id="notification-send-invoke-result"></span>
+        </div>
+      </li>
+    </ul>
+  </body>
+</html>
