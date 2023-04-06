@@ -1,6 +1,5 @@
 ﻿using Lantern.Platform;
 using Lantern.Threading;
-using System.ComponentModel.DataAnnotations;
 
 namespace Lantern.Windows;
 

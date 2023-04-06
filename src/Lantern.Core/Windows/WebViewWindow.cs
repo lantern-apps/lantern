@@ -250,6 +250,7 @@ public class WebViewWindow : Window, IWebViewWindow
 
         _webview.Settings.UserAgent = _windowOptions.UserAgent;
         _webview.Settings.AreDefaultContextMenusEnabled = _windowOptions.AreDefaultContextMenusEnabled;
+        _webview.Settings.IsZoomControlEnabled = _windowOptions.IsZoomControlEnabled;
         _webview.Settings.AreBrowserAcceleratorKeysEnabled = _windowOptions.AreBrowserAcceleratorKeysEnabled;
         _webview.Settings.AreDevToolsEnabled = _windowOptions.AreDevToolsEnabled;
         _webview.Settings.IsStatusBarEnabled = _windowOptions.IsStatusBarEnabled;
