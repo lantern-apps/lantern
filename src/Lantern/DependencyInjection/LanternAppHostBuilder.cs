@@ -1,4 +1,5 @@
 ﻿using Calls;
+using Lantern.Aus;
 using Lantern.Controllers;
 using Lantern.Messaging;
 using Lantern.Services;
@@ -6,10 +7,7 @@ using Lantern.Windows;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Lantern.Aus;
 
 namespace Lantern;
 
@@ -422,7 +420,7 @@ public class LanternAppHostBuilder : ILanternHostBuilder
             _envOptions.UserDataFolder = ValidationHelper.ValidatePathQualified(_envOptions.UserDataFolder);
         }
 
-        if (!hasDefault)
+        if (!hasDefault && Directory.Exists(DefaultVirualHostFolderName))
         {
             _envOptions.AddVirtualHostMapping(DefaultVirualHostName, DefaultVirualHostFolderName);
         }
