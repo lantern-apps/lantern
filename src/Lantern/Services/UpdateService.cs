@@ -51,13 +51,13 @@ internal class UpdateService : ILanternService
 
                 try
                 {
-                    await Task.Delay(_options.CheckInterval, _lifetime.ApplicationStopping);
+                    await Task.Delay(_options.CheckPeriod, _lifetime.ApplicationStopping);
                 }
                 catch (OperationCanceledException)
                 {
 
                 }
-            }, null, TimeSpan.Zero, _options.CheckInterval);
+            }, null, _options.CheckDelay, _options.CheckPeriod);
         });
 
         _lifetime.ApplicationStopping.Register(() =>

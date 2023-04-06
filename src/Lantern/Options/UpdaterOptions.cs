@@ -25,6 +25,8 @@ public class UpdaterOptions
         "*.exe.WebView2/**",
     };
 
-    public TimeSpan CheckInterval { get; set; } = TimeSpan.FromHours(1);
+    public TimeSpan CheckPeriod { get; set; } = TimeSpan.FromHours(1);
+
+    public TimeSpan CheckDelay { get; set; } = TimeSpan.FromSeconds(5);
 
 }
