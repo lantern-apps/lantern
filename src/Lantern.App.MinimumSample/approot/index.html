@@ -1,0 +1,13 @@
+﻿<html>
+<head>
+    <title>Lantern</title>
+</head>
+<body>
+    <h1>Hello Lantern</h1>
+    <script>
+        window.chrome.webview.addEventListener('message', arg => {
+            alert(arg.data);
+        });
+    </script>
+</body>
+</html>
