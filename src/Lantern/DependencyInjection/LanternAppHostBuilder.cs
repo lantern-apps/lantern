@@ -82,6 +82,7 @@ public class LanternAppHostBuilder : ILanternHostBuilder
 
     private void AddBuiltInFeatures()
     {
+        AddFeature<UpdateService>();
         AddFeature<Ipc, IpcImpl>();
         AddFeature<ITrayManager, TrayService>();
         AddFeature<IWindowManager, WindowService>();
@@ -326,7 +327,6 @@ public class LanternAppHostBuilder : ILanternHostBuilder
             ServerAddress = _lanternOptions.Updater.ServerAddress,
             TempFilePath = _lanternOptions.Updater.UpdateDataPath,
         });
-        _services.AddSingleton<ILanternService, UpdateService>();
         _services.AddScoped<IAusUpdateManager, AusUpdateManager>();
     }
 
@@ -428,7 +428,6 @@ public class LanternAppHostBuilder : ILanternHostBuilder
 
     private void BuildTrayOptions()
     {
-
         TrayOptions options = new();
 
         foreach (var taryAction in _trayActions)
@@ -481,7 +480,6 @@ public class LanternAppHostBuilder : ILanternHostBuilder
         {
             _lanternOptions.UserDataFolder = ValidationHelper.ValidatePathQualified(_lanternOptions.UserDataFolder);
         }
-
     }
 
     public static LanternAppHostBuilder Create() => Create(new ServiceCollection());

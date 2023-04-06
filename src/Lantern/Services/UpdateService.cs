@@ -12,6 +12,7 @@ internal class UpdateService : ILanternService
     private readonly IServiceProvider _serviceProvider;
     private readonly IAppLifetime _lifetime;
     private readonly IEventEmitter _eventEmitter;
+    private bool _disabled;
     private Timer? _timer;
 
     public UpdateService(
@@ -30,25 +31,38 @@ internal class UpdateService : ILanternService
 
     public void Initialize()
     {
+        if(_options.ServerAddress == null)
+        {
+            return;
+        }
+
         CheckSetupUpdate(true);
 
-        _timer = new Timer(async state =>
+        if (_disabled)
         {
-            await CheckPrepareUpdateAsync(_lifetime.ApplicationStopping);
+            return;
+        }
 
-            try
+        _lifetime.ApplicationStarted.Register(() =>
+        {
+            _timer = new Timer(async state =>
             {
-                await Task.Delay(_options.CheckInterval, _lifetime.ApplicationStopping);
-            }
-            catch (OperationCanceledException)
-            {
+                await CheckPrepareUpdateAsync(_lifetime.ApplicationStopping);
 
-            }
-        }, null, TimeSpan.Zero, _options.CheckInterval);
+                try
+                {
+                    await Task.Delay(_options.CheckInterval, _lifetime.ApplicationStopping);
+                }
+                catch (OperationCanceledException)
+                {
+
+                }
+            }, null, TimeSpan.Zero, _options.CheckInterval);
+        });
 
         _lifetime.ApplicationStopping.Register(() =>
         {
-            _timer.Change(Timeout.Infinite, 0);
+            _timer?.Change(Timeout.Infinite, 0);
         });
     }
 
@@ -58,7 +72,13 @@ internal class UpdateService : ILanternService
 
         try
         {
-            using var manager = scope.ServiceProvider.GetRequiredService<IAusUpdateManager>();
+            using var manager = scope.ServiceProvider.GetService<IAusUpdateManager>();
+            if(manager == null)
+            {
+                _disabled = true;
+                return;
+            }
+
             var result = await manager.CheckForUpdateAsync(stoppingToken);
             if (result.CanUpdate && !result.IsPrepared)
             {
@@ -102,7 +122,12 @@ internal class UpdateService : ILanternService
         using var scope = _serviceProvider.CreateScope();
         try
         {
-            using var manager = scope.ServiceProvider.GetRequiredService<IAusUpdateManager>();
+            using var manager = scope.ServiceProvider.GetService<IAusUpdateManager>();
+            if (manager == null)
+            {
+                return;
+            }
+
             if (manager.HasUpdatePrepared(out var version))
             {
                 _logger.LogInformation($"launching update {version}");
