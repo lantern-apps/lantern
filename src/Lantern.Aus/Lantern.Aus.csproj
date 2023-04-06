@@ -15,7 +15,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="../Lantern.Aus.Updater/bin/Release/net7.0/publish/win-x64/Lantern.Aus.Updater.exe">
+		<EmbeddedResource Include="../Lantern.Aus.Updater/bin/Release/net8.0/publish/win-x64/Lantern.Aus.Updater.exe">
 			<Link>Updater.exe</Link>
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 			<Visible>false</Visible>
