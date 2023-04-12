@@ -14,7 +14,7 @@ public partial class TrayIconImpl
         data.hWnd = Win32Platform.Instance.Handle;
         data.uFlags = NIF.ICON | NIF.TIP | NIF.INFO | NIF.SHOWTIP | NIF.MESSAGE;
         data.uTimeoutOrVersion = 10 * 1000 | NOTIFYICON_VERSION;
-        data.dwInfoFlags = NIIF.WARNING;
+        data.dwInfoFlags = NIIF.NONE;// NIIF.WARNING;
         data.hIcon = _icon == 0 ? s_emptyIcon : _icon;
         data.uCallbackMessage = (int)WM_TRAYMOUSE;
         data.szTip = _tooltip!;
