@@ -93,6 +93,10 @@ internal class UpdateService : ILanternService
                 OnUpdatePreparedAsync(result.Patch);
             }
         }
+        catch (OperationCanceledException)
+        {
+
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "exception on check and prepare update");
