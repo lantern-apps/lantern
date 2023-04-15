@@ -111,9 +111,7 @@ public partial class LanternApp : ILanternHost, ILanternApp
             return false;
         }
 
-        CheckWebView2Environment();
-
-        return true;
+        return CheckWebView2Environment();
     }
 
     private bool CheckWebView2Environment()
@@ -147,10 +145,10 @@ public partial class LanternApp : ILanternHost, ILanternApp
         {
             Directory.CreateDirectory(dir);
 
-            using (HttpClient httpClient = new())
-            using (var stream = httpClient.GetStreamAsync("https://go.microsoft.com/fwlink/p/?LinkId=2124703").GetAwaiter().GetResult())
-            using (var fs = File.OpenWrite(path))
-                stream.CopyTo(fs);
+            using HttpClient httpClient = new();
+            using var stream = httpClient.GetStreamAsync("https://go.microsoft.com/fwlink/p/?LinkId=2124703").GetAwaiter().GetResult();
+            using var fs = File.OpenWrite(path);
+            stream.CopyTo(fs);
         }
         catch
         {
