@@ -6,6 +6,16 @@
 public interface IAusUpdateManager : IDisposable
 {
     /// <summary>
+    /// Current manifest
+    /// </summary>
+    AusManifest? Manifest { get;  } 
+
+    /// <summary>
+    /// Update patch
+    /// </summary>
+    AusManifest? UpdateManifest { get; }
+
+    /// <summary>
     /// Mark sure manifest file is prepared
     /// </summary>
     /// <param name="cancellationToken"></param>
@@ -33,7 +43,7 @@ public interface IAusUpdateManager : IDisposable
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task CheckPerformUpdateAsync(CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Has update file is prepared
     /// </summary>

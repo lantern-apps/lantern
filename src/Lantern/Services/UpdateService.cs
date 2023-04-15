@@ -1,7 +1,6 @@
-﻿using Lantern.Messaging;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Lantern.Aus;
+using Lantern.Messaging;
 using Microsoft.Extensions.Logging;
-using Lantern.Aus;
 
 namespace Lantern.Services;
 
@@ -9,7 +8,7 @@ internal class UpdateService : ILanternService
 {
     private readonly UpdaterOptions _options;
     private readonly ILogger<UpdateService> _logger;
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IAusUpdateManager _updateManager;
     private readonly IAppLifetime _lifetime;
     private readonly IEventEmitter _eventEmitter;
     private bool _disabled;
@@ -17,14 +16,14 @@ internal class UpdateService : ILanternService
 
     public UpdateService(
         LanternOptions options,
-        IServiceProvider serviceProvider,
+        IAusUpdateManager updateManager,
         IAppLifetime lifetime,
         IEventEmitter eventEmitter,
         ILogger<UpdateService> logger)
     {
         _options = options.Updater;
         _lifetime = lifetime;
-        _serviceProvider = serviceProvider;
+        _updateManager = updateManager;
         _eventEmitter = eventEmitter;
         _logger = logger;
     }
@@ -68,25 +67,16 @@ internal class UpdateService : ILanternService
 
     private async Task CheckPrepareUpdateAsync(CancellationToken stoppingToken)
     {
-        using var scope = _serviceProvider.CreateScope();
-
         try
         {
-            using var manager = scope.ServiceProvider.GetService<IAusUpdateManager>();
-            if(manager == null)
-            {
-                _disabled = true;
-                return;
-            }
-
-            var result = await manager.CheckForUpdateAsync(stoppingToken);
+            var result = await _updateManager.CheckForUpdateAsync(stoppingToken);
             if (result.CanUpdate && !result.IsPrepared)
             {
                 _logger.LogInformation($"Checked update {result.Patch.Version}");
 
                 OnUpdateCheckedAsync(result.Patch);
 
-                await manager.PrepareUpdateAsync(result, stoppingToken);
+                await _updateManager.PrepareUpdateAsync(result, stoppingToken);
 
                 _logger.LogInformation($"Prepared update {result.Patch.Version}");
 
@@ -123,20 +113,13 @@ internal class UpdateService : ILanternService
 
     private void CheckSetupUpdate(bool restart)
     {
-        using var scope = _serviceProvider.CreateScope();
         try
         {
-            using var manager = scope.ServiceProvider.GetService<IAusUpdateManager>();
-            if (manager == null)
-            {
-                return;
-            }
-
-            if (manager.HasUpdatePrepared(out var version))
+            if (_updateManager.HasUpdatePrepared(out var version))
             {
                 _logger.LogInformation($"launching update {version}");
 
-                manager.LaunchUpdater(version, new LaunchUpdaterOptions
+                _updateManager.LaunchUpdater(version, new LaunchUpdaterOptions
                 {
                     Restart = restart,
                     Launched = OnUpdateLaunched,

@@ -11,30 +11,25 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
 {
     private const string UpdaterResourceName = "Lantern.Aus.Updater.exe";
     private const string ManifestName = ".manifest";
-    private const string PatchName = ".patch";
+    private const string FileExtensions = ".deploy";
 
     private static readonly string _updateDirectory = AppDomain.CurrentDomain.BaseDirectory;
     private static readonly string _manifestFilePath = Path.Combine(_updateDirectory, ManifestName);
-
-    /// <summary>
-    /// Current program manifest
-    /// </summary>
-    public static AusManifest Manifest { get; private set; } = null!;
-
-    /// <summary>
-    /// Update patch
-    /// </summary>
-    public static AusManifest? Patch { get; private set; }
 
     private readonly string _storageDirPath;
     private readonly string _lockFilePath;
     private readonly string _updaterFilePath;
     private readonly string[] _exclusiveFiles;
+    private readonly string _applicationDir;
 
-    private readonly AusUpdateClient _updateClient;
-    private readonly Version _initVersion;
-    private readonly string _package;
+    private readonly Version _version;
+    private readonly string _appName;
     private readonly string _entryFilePath;
+    private readonly string _updateUrl;
+    private bool _updateUrlValid;
+
+    private LockFile? _lockFile;
+    private bool _isDisposed;
 
     /// <summary>
     /// Constructor
@@ -43,34 +38,29 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
     /// <exception cref="ArgumentNullException"></exception>
     public AusUpdateManager(AusUpdateOptions options)
     {
-        if (string.IsNullOrEmpty(options.ServerAddress))
-            throw new ArgumentNullException(nameof(options.ServerAddress), $"The {nameof(AusUpdateOptions)}.{nameof(options.ServerAddress)} value cannot be null or empty.");
-
         Assembly assembly = Assembly.GetEntryAssembly()!;
-        _package = options.PackageName ?? assembly.GetName().Name!;
-        _initVersion = options.InitVersion ?? assembly.GetName().Version ?? new Version(0, 0, 0);
+        _appName = options.AppName ?? assembly.GetName().Name!;
+        _version = options.Version ?? assembly.GetName().Version ?? new Version(0, 0, 0);
         _entryFilePath = options.EntryFilePath ?? assembly.Location!;
+        _applicationDir = Path.GetDirectoryName(_entryFilePath)!;
 
         if (options.Exclusives == null)
         {
-            _exclusiveFiles = new string[] { ManifestName, PatchName };
+            _exclusiveFiles = new string[] { ManifestName };
         }
         else
         {
-            _exclusiveFiles = new string[options.Exclusives.Count + 2];
+            _exclusiveFiles = new string[options.Exclusives.Count + 1];
             _exclusiveFiles[0] = ManifestName;
-            _exclusiveFiles[1] = PatchName;
-            options.Exclusives.CopyTo(_exclusiveFiles, 2);
+            options.Exclusives.CopyTo(_exclusiveFiles, 1);
         }
 
-        _updateClient = new AusUpdateClient(options.ServerAddress, _package);
-
-        _storageDirPath = options.TempFilePath ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), _package, "Update");
-        _lockFilePath = Path.Combine(_storageDirPath, $"{_package}.lock");
+        _storageDirPath = options.TempFilePath ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), _appName, "Update");
+        _lockFilePath = Path.Combine(_storageDirPath, $"{_appName}.lock");
 
         if (options.UpdaterName == null)
         {
-            _updaterFilePath = Path.Combine(_storageDirPath, $"{_package}.Updater.exe");
+            _updaterFilePath = Path.Combine(_storageDirPath, $"{_appName}.Updater.exe");
         }
         else
         {
@@ -79,10 +69,24 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
             else
                 _updaterFilePath = Path.Combine(_storageDirPath, $"{options.UpdaterName}.exe");
         }
+
+        _updateUrl = options.ServerAddress;
+        if (!string.IsNullOrEmpty(_updateUrl) && Uri.IsWellFormedUriString(_updateUrl, UriKind.Absolute))
+        {
+            _updateUrlValid = true;
+
+            if (!_updateUrl.EndsWith('/'))
+            {
+                _updateUrl += '/';
+            }
+        }
     }
 
-    private LockFile? _lockFile;
-    private bool _isDisposed;
+    /// <inheritdoc/>
+    public AusManifest? Manifest { get; private set; }
+
+    /// <inheritdoc/>
+    public AusManifest? UpdateManifest { get; private set; }
 
     /// <inheritdoc/>
     public async Task EnsurePrepareManifestAsync(CancellationToken cancellationToken = default)
@@ -94,20 +98,20 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
         {
             try
             {
-                Manifest = AusManifest.LoadFromFile(_manifestFilePath);
-                if (Manifest?.Version != null && Manifest.Version >= _initVersion)
+                Manifest = AusManifest.ParseFile(_manifestFilePath);
+                if (Manifest?.Version != null && Manifest.Version >= _version)
                     return;
             }
             catch { }
         }
 
-        var files = await AusManifest.LoadAsync(_updateDirectory, _exclusiveFiles, cancellationToken);
-        Manifest = new()
-        {
-            Name = _package,
-            Version = _initVersion,
-            Files = files
-        };
+        Manifest = await AusManifest.LoadAsync(
+            _appName,
+            _version,
+            _updateDirectory,
+            _exclusiveFiles,
+            cancellationToken);
+
         Manifest.SaveAs(_manifestFilePath);
     }
 
@@ -116,24 +120,34 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
     {
         await EnsurePrepareManifestAsync(cancellationToken);
 
-        var remote = await _updateClient.GetUpdateAsync(Manifest.Version, cancellationToken);
+        using HttpClient httpClient = CreateHttpClient();
+
+        var appinfo = await httpClient.GetApplicationInfoAsync(cancellationToken);
+        if (appinfo == null || appinfo.LatestVersion <= Manifest!.Version)
+        {
+            return new AusUpdateResult(Manifest!, null, null, false, null);
+        }
+
+        var remote = await httpClient.GetManifestAsync(appinfo.LatestVersion, cancellationToken);
 
         if (remote == null)
-            return new AusUpdateResult(Manifest, null, null, false);
+        {
+            return new AusUpdateResult(Manifest, null, null, false, null);
+        }
 
         var files = Manifest.CheckForUpdates(remote);
 
         if (IsUpdatePrepared(remote.Version))
-            return new AusUpdateResult(Manifest, remote, files, true);
+            return new AusUpdateResult(Manifest, remote, files, true, appinfo.MapFileExtensions);
         else
-            return new AusUpdateResult(Manifest, remote, files, false);
+            return new AusUpdateResult(Manifest, remote, files, false, appinfo.MapFileExtensions);
     }
 
     /// <inheritdoc/>
     public async Task CheckPerformUpdateAsync(CancellationToken cancellationToken = default)
     {
         EnsureNotDisposed();
-        EnsureLockFileAcquired();
+        using var _ = EnsureLockFileAcquired();
 
         var result = await CheckForUpdateAsync(cancellationToken);
         if (!result.CanUpdate)
@@ -150,15 +164,17 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
     /// <inheritdoc/>
     public async Task PrepareUpdateAsync(AusUpdateResult result, CancellationToken cancellationToken = default)
     {
-        EnsureNotDisposed();
-        EnsureLockFileAcquired();
-
         if (!result.CanUpdate)
             return;
+
+        EnsureNotDisposed();
+        using var _ = EnsureLockFileAcquired();
 
         var destDirPath = Path.Combine(_storageDirPath, result.Patch.Version.ToString());
 
         Directory.CreateDirectory(destDirPath);
+
+        using HttpClient httpClient = CreateHttpClient();
 
         foreach (var file in result.UpdateFiles)
         {
@@ -179,7 +195,11 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
                 }
             }
 
-            await _updateClient.DownloadAsync(file.FromVersion ?? result.Patch.Version, file.Name, destFilePath, null, cancellationToken);
+            await httpClient.DownloadAsync(file.FromVersion ?? result.Patch.Version,
+                                           result.MapFileExtensions == true ? file.Name + FileExtensions : file.Name,
+                                           destFilePath,
+                                           null,
+                                           cancellationToken);
         }
 
         var patch = new AusManifest
@@ -188,9 +208,8 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
             Version = result.Patch.Version,
             Files = result.UpdateFiles.ToList()
         };
-        patch.SaveAs(Path.Combine(destDirPath, PatchName));
 
-        Patch = patch;
+        UpdateManifest = patch;
 
         var manifest = result.Manifest.ApplyPatch(patch);
         manifest.ClearFileVersion(true);
@@ -227,7 +246,7 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
                 }
             }
         }
-        if (version == null || version < _initVersion)
+        if (version == null || version < _version)
             return false;
 
         return IsUpdatePrepared(version);
@@ -238,20 +257,23 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
     {
         EnsureNotDisposed();
         var manifestFilePath = Path.Combine(_storageDirPath, version.ToString(), ManifestName);
-        var patchFilePath = Path.Combine(_storageDirPath, version.ToString(), PatchName);
 
         if (!File.Exists(manifestFilePath) ||
-            !File.Exists(patchFilePath) ||
             !File.Exists(_updaterFilePath))
             return false;
 
-        var patch = AusManifest.LoadFromFile(patchFilePath);
+        var manifest = AusManifest.ParseFile(manifestFilePath);
 
-        foreach (var file in patch.Files)
+        foreach (var file in manifest.Files)
         {
             var fileInfo = new FileInfo(Path.Combine(_storageDirPath, version.ToString(), file.Name));
             if (!fileInfo.Exists)
+            {
+                if (File.Exists(Path.Combine(_applicationDir, file.Name)))
+                    continue;
+
                 return false;
+            }
 
             if (fileInfo.Length != file.Size)
                 return false;
@@ -269,9 +291,9 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
         }
 
         EnsureNotDisposed();
-        EnsureLockFileAcquired();
         EnsureUpdaterNotLaunched();
         EnsureUpdatePrepared(version);
+        using var _ = EnsureLockFileAcquired();
 
         options ??= new();
 
@@ -282,7 +304,7 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
         var routedArgs = options.Arguments == null ? null : Convert.ToBase64String(Encoding.UTF8.GetBytes(options.Arguments));
 
         // Prepare arguments
-        var updaterArgs = $"\"{_entryFilePath}\" \"{packageContentDirPath}\" \"{options.Restart}\" \"{routedArgs}\"";
+        var updaterArgs = $"\"{_entryFilePath}\" \"{_applicationDir}\" \"{packageContentDirPath}\" \"{options.Restart}\" \"{routedArgs}\"";
 
         // Create updater process start info
         var updaterStartInfo = new ProcessStartInfo
@@ -338,7 +360,7 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
         }
     }
 
-    private void EnsureLockFileAcquired()
+    private LockFile EnsureLockFileAcquired()
     {
         Directory.CreateDirectory(_storageDirPath);
         _lockFile ??= LockFile.TryAcquire(_lockFilePath);
@@ -346,6 +368,7 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
         // If failed to acquire - throw
         if (_lockFile == null)
             throw new Exception("LockFileNotAcquiredException");
+        return _lockFile;
     }
 
     private void KillEntryProcess()
@@ -395,13 +418,26 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
             throw new Exception("UpdateNotPreparedException");
     }
 
+    private HttpClient CreateHttpClient()
+    {
+        if (!_updateUrlValid)
+        {
+            throw new AusException("Invaild update url.", null);
+        }
+
+        return new HttpClient()
+        {
+            BaseAddress = new Uri(_updateUrl)
+        };
+    }
+
+    /// <inheritdoc/>
     public void Dispose()
     {
         if (!_isDisposed)
         {
             _isDisposed = true;
             _lockFile?.Dispose();
-            _updateClient?.Dispose();
         }
     }
 }

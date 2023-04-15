@@ -15,36 +15,38 @@ using System.Text;
 internal class Program
 {
     private static readonly TextWriter _logger = File.CreateText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"update_{DateTime.Now:yyyy_MM_dd_HH_mm_ss}.log"));
-    private static string _updateeFilePath = null!;
-    private static string _packageContentDirPath = null!;
-    private static bool _restartUpdatee = false;
-    private static string? _routedArgs = null;
+    private static string _entryFile = null!;
+    private static string _targetDir = null!;
+    private static string _sourceDir = null!;
+    private static bool _restart = false;
+    private static string? _args = null;
 
     private static void Main(string[] args)
     {
-        if (args.Length < 2)
+        if (args.Length < 3)
         {
             WriteLog("miss argument");
             Exit();
         }
 
-        _updateeFilePath = args[0];
-        _packageContentDirPath = args[1];
+        _entryFile = args[0];
+        _targetDir = args[1];
+        _sourceDir = args[2];
 
-        if (args.Length >= 3)
+        if (args.Length >= 4)
         {
-            if (!bool.TryParse(args[2], out _restartUpdatee))
+            if (!bool.TryParse(args[3], out _restart))
             {
                 WriteLog("argument 'restart' cannot be parse to bool value");
                 Exit();
             }
         }
 
-        if (args.Length >= 4)
+        if (args.Length >= 5)
         {
             try
             {
-                _routedArgs = Encoding.UTF8.GetString(Convert.FromBase64String(args[3]));
+                _args = Encoding.UTF8.GetString(Convert.FromBase64String(args[4]));
             }
             catch
             {
@@ -68,12 +70,10 @@ internal class Program
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static void RunCore()
     {
-        var updateeDirPath = Path.GetDirectoryName(_updateeFilePath)!;
-
         // Wait until updatee is writable to ensure all running instances have exited
         WriteLog("wait for caller exit");
         int i = 0;
-        while (!CheckWriteAccess(_updateeFilePath))
+        while (!CheckWriteAccess(_entryFile))
         {
             if (i > 100)
             {
@@ -86,18 +86,18 @@ internal class Program
         }
 
         // Copy over the package contents
-        WriteLog($"source directory {_packageContentDirPath}");
-        WriteLog($"target directory {updateeDirPath}");
+        WriteLog($"source directory {_sourceDir}");
+        WriteLog($"target directory {_targetDir}");
 
-        CopyDirectory(_packageContentDirPath, updateeDirPath);
+        CopyDirectory(_sourceDir, _targetDir);
 
-        if (_restartUpdatee)
+        if (_restart)
         {
-            Restart(updateeDirPath);
+            Restart(_targetDir);
         }
 
         WriteLog("delete temp files");
-        Directory.Delete(_packageContentDirPath, true);
+        Directory.Delete(_sourceDir, true);
     }
 
     [DoesNotReturn]
@@ -113,21 +113,21 @@ internal class Program
         var startInfo = new ProcessStartInfo
         {
             WorkingDirectory = updateeDirPath,
-            Arguments = _routedArgs,
+            Arguments = _args,
             UseShellExecute = true // avoid sharing console window with updatee
         };
 
         // If updatee is an .exe file - start it directly
-        if (string.Equals(Path.GetExtension(_updateeFilePath), ".exe", StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(Path.GetExtension(_entryFile), ".exe", StringComparison.OrdinalIgnoreCase))
         {
-            startInfo.FileName = _updateeFilePath;
+            startInfo.FileName = _entryFile;
         }
         // If not - figure out what to do with it
         else
         {
             // If there's an .exe file with same name - start it instead
             // Security vulnerability?
-            var exe = Path.ChangeExtension(_updateeFilePath, ".exe");
+            var exe = Path.ChangeExtension(_entryFile, ".exe");
             if (File.Exists(exe))
             {
                 startInfo.FileName = exe;
@@ -136,7 +136,7 @@ internal class Program
             else
             {
                 startInfo.FileName = "dotnet";
-                startInfo.Arguments = $"{_updateeFilePath} {_routedArgs}";
+                startInfo.Arguments = $"{_entryFile} {_args}";
             }
         }
 

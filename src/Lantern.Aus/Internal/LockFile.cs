@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace Lantern.Aus.Internal;
+﻿namespace Lantern.Aus.Internal;
 
 internal partial class LockFile : IDisposable
 {

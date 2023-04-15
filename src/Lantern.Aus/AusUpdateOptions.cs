@@ -25,17 +25,19 @@ public class AusUpdateOptions
     /// <summary>
     /// Program package name, the default value is entry assembly name.
     /// </summary>
-    public string? PackageName { get; set; }
+    public string? AppName { get; set; }
 
     /// <summary>
     /// Initialize version, the default value is entry assembly version.
     /// </summary>
-    public Version? InitVersion { get; set; }
+    public Version? Version { get; set; }
 
     /// <summary>
     /// Entry file path, the default value is entry assembly location.
     /// </summary>
     public string? EntryFilePath { get; set; }
+
+    public string? AppDirectory { get; set; }
 
     /// <summary>
     /// Update file download path, the default value is %LocalAppData%\{PackageName}\Update
@@ -66,8 +68,8 @@ public class AusUpdateOptions
         Assembly assembly = Assembly.GetEntryAssembly()!;
         var assemblyName = assembly.GetName();
 
-        PackageName ??= assemblyName.Name;
-        InitVersion ??= assemblyName.Version ?? new Version(0, 0, 0);
+        AppName ??= assemblyName.Name;
+        Version ??= assemblyName.Version ?? new Version(0, 0, 0);
         EntryFilePath ??= assembly.Location!;
     }
 }

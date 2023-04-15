@@ -8,7 +8,6 @@
 		<Company>robos.cn</Company>
 		<RepositoryUrl></RepositoryUrl>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-		<PackageIcon>robos.png</PackageIcon>
 		<PackageProjectUrl>https://robos.cn</PackageProjectUrl>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<Description>.NET Automatic Update Service</Description>
@@ -27,18 +26,5 @@
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\Lantern.Aus.Common\Lantern.Aus.Common.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-		<None Include="..\robos.png">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-	</ItemGroup>
-	<Target Name="PushNugetPackage" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release'">
-		<Exec Command="call ..\nuget-publish.bat" />
-	</Target>
 
 </Project>

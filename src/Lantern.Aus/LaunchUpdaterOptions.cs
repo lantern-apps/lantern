@@ -7,5 +7,4 @@ public class LaunchUpdaterOptions
     public string? Arguments { get; set; }
     public Action? Launched { get; set; }
     public bool ForceUpdate { get; set; } = true;
-
 }

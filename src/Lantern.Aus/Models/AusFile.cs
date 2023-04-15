@@ -21,7 +21,7 @@ public class AusFile
     public static async Task<AusFile> LoadAsync(string baseDir, string fileName, CancellationToken cancellationToken = default)
     {
         var file = new FileInfo(fileName);
-        var hash = await FileHashHelper.ComputeSha256Async(fileName, cancellationToken);
+        var hash = await FileSystemHelper.ComputeSha256Async(fileName, cancellationToken);
         return new AusFile
         {
             Size = file.Length,
@@ -33,7 +33,7 @@ public class AusFile
     public static AusFile Load(string baseDir, string fileName)
     {
         var file = new FileInfo(fileName);
-        var hash = FileHashHelper.ComputeSha256(fileName);
+        var hash = FileSystemHelper.ComputeSha256(fileName);
         return new AusFile
         {
             Size = file.Length,

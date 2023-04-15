@@ -52,7 +52,7 @@ public static class AusUpdateServiceCollectionExtensions
         options.Validate();
 
         services.AddSingleton(options);
-        services.AddScoped<IAusUpdateManager, AusUpdateManager>();
+        services.AddSingleton<IAusUpdateManager, AusUpdateManager>();
 
         return services;
     }

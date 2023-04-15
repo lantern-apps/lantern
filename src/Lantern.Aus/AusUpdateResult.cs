@@ -2,7 +2,7 @@
 
 public class AusUpdateResult
 {
-    public AusUpdateResult(AusManifest manifest, AusManifest? patch, IList<AusFile>? files, bool isPrepared)
+    public AusUpdateResult(AusManifest manifest, AusManifest? patch, IReadOnlyList<AusFile>? files, bool isPrepared, bool? mapFileExtensions)
     {
         Manifest = manifest;
         Patch = patch!;
@@ -18,7 +18,9 @@ public class AusUpdateResult
             UpdateFiles = new List<AusFile>(files);
             CanUpdate = true;
         }
+
         IsPrepared = isPrepared;
+        MapFileExtensions = mapFileExtensions;
     }
 
     /// <summary>
@@ -30,6 +32,8 @@ public class AusUpdateResult
     /// Current file manifest
     /// </summary>
     public AusManifest Manifest { get; }
+
+    public bool? MapFileExtensions { get; }
 
     public bool CanUpdate { get; }
     public bool IsPrepared { get; }

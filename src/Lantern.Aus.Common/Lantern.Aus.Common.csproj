@@ -9,17 +9,10 @@
 		<Company>robos.cn</Company>
 		<RepositoryUrl></RepositoryUrl>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-		<PackageIcon>robos.png</PackageIcon>
 		<PackageProjectUrl>https://robos.cn</PackageProjectUrl>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<Description>.NET Automatic Update Service</Description>
 	</PropertyGroup>
-	<ItemGroup>
-		<None Include="..\robos.png">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="7.0.0" />
 	</ItemGroup>

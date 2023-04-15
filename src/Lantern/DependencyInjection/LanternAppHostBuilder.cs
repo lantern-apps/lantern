@@ -299,9 +299,6 @@ public class LanternAppHostBuilder : ILanternHostBuilder
 
     private void BuildUpdaterOptions()
     {
-        if (_updaterActions.Count == 0)
-            return;
-
         foreach (var updaterAction in _updaterActions)
         {
             updaterAction(_lanternOptions.Updater);
@@ -321,13 +318,13 @@ public class LanternAppHostBuilder : ILanternHostBuilder
         _services.AddSingleton(new AusUpdateOptions
         {
             Exclusives = _lanternOptions.Updater.Exclusives,
-            InitVersion = _lanternOptions.Version,
-            PackageName = _lanternOptions.AppName,
+            Version = _lanternOptions.Version,
+            AppName = _lanternOptions.AppName,
             UpdaterName = _lanternOptions.Updater.UpdaterName,
             ServerAddress = _lanternOptions.Updater.ServerAddress,
             TempFilePath = _lanternOptions.Updater.UpdateDataPath,
         });
-        _services.AddScoped<IAusUpdateManager, AusUpdateManager>();
+        _services.AddSingleton<IAusUpdateManager, AusUpdateManager>();
     }
 
     private void BuildWindowOptions()

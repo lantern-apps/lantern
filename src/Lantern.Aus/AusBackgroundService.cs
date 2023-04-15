@@ -84,7 +84,7 @@ public class AusBackgroundService : BackgroundService
             {
                 _logger.LogInformation($"launching update {version}");
 
-                await OnUpdateLaunchingAsync(AusUpdateManager.Patch!);
+                await OnUpdateLaunchingAsync(manager.UpdateManifest!);
 
                 manager.LaunchUpdater(version, new LaunchUpdaterOptions
                 {
