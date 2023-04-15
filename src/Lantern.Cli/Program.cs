@@ -7,12 +7,17 @@ class Program
 {
     static int Main(string[] args)
     {
-        Option<string> fileOption = new("--msg", "The file to read and display on the console.");
         RootCommand rootCommand = new("Sample app for System.CommandLine");
-        Command newCommand = new("new", "Read and display the file.") { fileOption };
-        rootCommand.AddCommand(newCommand);
 
+        Option<string> fileOption = new("--msg", "The file to read and display on the console.");
+        Command newCommand = new("new", "Read and display the file.") { fileOption };
+
+        Option<string> updateOption = new("--update", "The file to read and display on the console.");
+        Command publishCommand = new("publish", "Read and display the file.") { fileOption };
+
+        rootCommand.AddCommand(newCommand);
         newCommand.SetHandler(msg => New(msg), fileOption);
+        publishCommand.SetHandler(update => Publish(), updateOption);
 
         return rootCommand.InvokeAsync(args).Result;
     }
