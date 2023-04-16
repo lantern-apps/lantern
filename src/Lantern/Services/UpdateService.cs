@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lantern.Services;
 
-internal class UpdateService : ILanternService
+public class UpdateService : ILanternService
 {
     private readonly UpdaterOptions _options;
     private readonly ILogger<UpdateService> _logger;
@@ -28,9 +28,11 @@ internal class UpdateService : ILanternService
         _logger = logger;
     }
 
+    public AusUpdatePatch? Patch { get; private set; }
+
     public void Initialize()
     {
-        if(_options.ServerAddress == null)
+        if (_options.ServerAddress == null)
         {
             return;
         }
@@ -69,18 +71,19 @@ internal class UpdateService : ILanternService
     {
         try
         {
-            var result = await _updateManager.CheckForUpdateAsync(stoppingToken);
-            if (result.CanUpdate && !result.IsPrepared)
+            Patch = await _updateManager.CheckForUpdateAsync(stoppingToken);
+
+            if (Patch.CanUpdate && !Patch.IsPrepared)
             {
-                _logger.LogInformation($"Checked update {result.Patch.Version}");
+                _logger.LogInformation($"Checked update {Patch.Manifest.Version}");
 
-                OnUpdateCheckedAsync(result.Patch);
+                OnUpdateCheckedAsync(Patch.Manifest);
 
-                await _updateManager.PrepareUpdateAsync(result, stoppingToken);
+                await _updateManager.PrepareUpdateAsync(Patch, stoppingToken);
 
-                _logger.LogInformation($"Prepared update {result.Patch.Version}");
+                _logger.LogInformation($"Prepared update {Patch.Manifest.Version}");
 
-                OnUpdatePreparedAsync(result.Patch);
+                OnUpdatePreparedAsync(Patch.Manifest);
             }
         }
         catch (OperationCanceledException)
@@ -119,7 +122,7 @@ internal class UpdateService : ILanternService
             {
                 _logger.LogInformation($"launching update {version}");
 
-                _updateManager.LaunchUpdater(version, new LaunchUpdaterOptions
+                _updateManager.LaunchUpdater(new LaunchUpdaterOptions
                 {
                     Restart = restart,
                     Launched = OnUpdateLaunched,

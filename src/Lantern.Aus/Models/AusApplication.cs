@@ -10,8 +10,8 @@ public class AusApplication
     [JsonPropertyName("description")]
     public string Description { get; set; }
 
-    [JsonPropertyName("latestVersion")]
-    public Version LatestVersion { get; set; }
+    [JsonPropertyName("version")]
+    public Version Version { get; set; }
 
     [JsonPropertyName("mapFileExtensions")]
     public bool MapFileExtensions { get; set; }

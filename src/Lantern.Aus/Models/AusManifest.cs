@@ -15,16 +15,13 @@ public partial class AusManifest
     };
 
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     [JsonPropertyName("version")]
-    public Version Version { get; set; }
-
-    [JsonPropertyName("r")]
-    public Version? RequireVersion { get; set; }
+    public required Version Version { get; set; }
 
     [JsonPropertyName("files")]
-    public IList<AusFile> Files { get; set; } = new List<AusFile>();
+    public required IList<AusFile> Files { get; set; } = new List<AusFile>();
 
     public IReadOnlyList<AusFile> CheckForUpdates(AusManifest package)
     {
@@ -50,15 +47,6 @@ public partial class AusManifest
         File.WriteAllText(filename, json);
     }
 
-    public void ClearFileVersion(bool clearAll = false)
-    {
-        foreach (var file in Files)
-        {
-            if (clearAll || file.FromVersion == Version)
-                file.FromVersion = null;
-        }
-    }
-
     public AusManifest Clone()
     {
         return new AusManifest()
@@ -70,7 +58,6 @@ public partial class AusManifest
                 Name = x.Name,
                 Hash = x.Hash,
                 Size = x.Size,
-                FromVersion = x.FromVersion ?? Version,
             })?.ToList() ?? new List<AusFile>()
         };
     }
@@ -86,7 +73,6 @@ public partial class AusManifest
                 Name = x.Name,
                 Hash = x.Hash,
                 Size = x.Size,
-                FromVersion = x.FromVersion ?? Version,
             })?.ToList() ?? new List<AusFile>()
         };
 
@@ -100,14 +86,12 @@ public partial class AusManifest
                     Name = file.Name,
                     Hash = file.Hash,
                     Size = file.Size,
-                    FromVersion = patch.Version,
                 });
             }
             else
             {
                 original.Hash = file.Hash;
                 original.Size = file.Size;
-                original.FromVersion = patch.Version;
             }
         }
 

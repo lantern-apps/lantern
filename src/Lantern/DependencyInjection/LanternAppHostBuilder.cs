@@ -308,7 +308,7 @@ public class LanternAppHostBuilder : ILanternHostBuilder
 
         if (_lanternOptions.Updater.UpdateDataPath == null)
         {
-            _lanternOptions.Updater.UpdateDataPath = Path.Combine(_lanternOptions.UserDataFolder, " UpdateData");
+            _lanternOptions.Updater.UpdateDataPath = Path.Combine(_lanternOptions.UserDataFolder, "UpdateData");
         }
         else
         {

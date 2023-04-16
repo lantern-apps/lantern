@@ -14,9 +14,16 @@ public class AusFile
     [JsonPropertyName("size")]
     public long Size { get; set; }
 
-    [JsonPropertyName("v")]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public Version? FromVersion { get; set; }
+    public bool ValidateFile(string baseDir)
+    {
+        var fileInfo = new FileInfo(Path.Combine(baseDir, Name));
+
+        if (!fileInfo.Exists || fileInfo.Length != Size)
+        {
+            return false;
+        }
+        return true;
+    }
 
     public static async Task<AusFile> LoadAsync(string baseDir, string fileName, CancellationToken cancellationToken = default)
     {

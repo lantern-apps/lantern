@@ -8,8 +8,8 @@
 		<Company>robos.cn</Company>
 		<RepositoryUrl></RepositoryUrl>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-		<PackageProjectUrl>https://robos.cn</PackageProjectUrl>
-		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<!--<PackageProjectUrl>https://robos.cn</PackageProjectUrl>-->
+		<!--<GenerateDocumentationFile>True</GenerateDocumentationFile>-->
 		<Description>.NET Automatic Update Service</Description>
 	</PropertyGroup>
 

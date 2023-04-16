@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Lantern.Aus;
@@ -8,15 +7,15 @@ public class AusBackgroundService : BackgroundService
 {
     protected readonly ILogger _logger;
     protected readonly AusBackgroundServiceOptions _options;
-    protected readonly IServiceProvider _serviceProvider;
+    protected readonly IAusUpdateManager _updateManager;
 
     public AusBackgroundService(
         AusBackgroundServiceOptions options,
-        IServiceProvider serviceProvider,
+        IAusUpdateManager updateManager,
         ILogger<AusBackgroundService> logger)
     {
         _options = options;
-        _serviceProvider = serviceProvider;
+        _updateManager = updateManager;
         _logger = logger;
     }
 
@@ -49,23 +48,21 @@ public class AusBackgroundService : BackgroundService
 
     private async Task CheckPrepareUpdateAsync(CancellationToken stoppingToken)
     {
-        using var scope = _serviceProvider.CreateScope();
-
         try
         {
-            using var manager = scope.ServiceProvider.GetRequiredService<IAusUpdateManager>();
-            var result = await manager.CheckForUpdateAsync(stoppingToken);
-            if (result.CanUpdate && !result.IsPrepared)
+            var patch = await _updateManager.CheckForUpdateAsync(stoppingToken);
+
+            if (patch.CanUpdate && !patch.IsPrepared)
             {
-                _logger.LogInformation($"Checked update {result.Patch.Version}");
+                _logger.LogInformation($"Checked update {patch.Manifest.Version}");
 
-                await OnUpdateCheckedAsync(result.Patch);
+                await OnUpdateCheckedAsync(patch.Manifest);
 
-                await manager.PrepareUpdateAsync(result, stoppingToken);
+                await _updateManager.PrepareUpdateAsync(patch, stoppingToken);
 
-                _logger.LogInformation($"Prepared update {result.Patch.Version}");
+                _logger.LogInformation($"Prepared update {patch.Manifest.Version}");
 
-                await OnUpdatePreparedAsync(result.Patch);
+                await OnUpdatePreparedAsync(patch.Manifest);
             }
         }
         catch (Exception ex)
@@ -76,17 +73,13 @@ public class AusBackgroundService : BackgroundService
 
     private async Task CheckSetupUpdate(bool restart)
     {
-        using var scope = _serviceProvider.CreateScope();
         try
         {
-            using var manager = scope.ServiceProvider.GetRequiredService<IAusUpdateManager>();
-            if (manager.HasUpdatePrepared(out var version))
+            if (_updateManager.HasUpdatePrepared(out var version))
             {
-                _logger.LogInformation($"launching update {version}");
+                _logger.LogInformation($"Launching update {version}");
 
-                await OnUpdateLaunchingAsync(manager.UpdateManifest!);
-
-                manager.LaunchUpdater(version, new LaunchUpdaterOptions
+                _updateManager.LaunchUpdater(new LaunchUpdaterOptions
                 {
                     Restart = restart,
                     Launched = OnUpdateLaunched,
@@ -112,13 +105,6 @@ public class AusBackgroundService : BackgroundService
     /// <param name="update">Update patch</param>
     /// <returns></returns>
     protected virtual Task OnUpdatePreparedAsync(AusManifest update) => Task.CompletedTask;
-
-    /// <summary>
-    /// On launching update program
-    /// </summary>
-    /// <param name="update">Update patch</param>
-    /// <returns></returns>
-    protected virtual Task OnUpdateLaunchingAsync(AusManifest update) => Task.CompletedTask;
 
     /// <summary>
     /// On update program launched

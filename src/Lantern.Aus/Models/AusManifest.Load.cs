@@ -38,6 +38,35 @@ public partial class AusManifest
         };
     }
 
+    public static AusManifest Load(
+        string name,
+        Version version,
+        string directory,
+        string[] exclusives)
+    {
+        Matcher matcher = new();
+        matcher.AddIncludePatterns(new string[] { "**/*" });
+        matcher.AddExcludePatterns(exclusives);
+        var filePaths = matcher.GetResultsInFullPath(directory);
+
+        List<AusFile> files = new();
+        foreach (string filename in filePaths)
+        {
+            if (exclusives.Contains(filename))
+                continue;
+
+            var file = AusFile.Load(directory, filename);
+            files.Add(file);
+        }
+
+        return new()
+        {
+            Name = name,
+            Version = version,
+            Files = files
+        };
+    }
+
     public static AusManifest ParseFile(string filename)
     {
         if (!File.Exists(filename))

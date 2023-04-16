@@ -3,15 +3,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-//args = new string[]
-//{
-//    @"C:\Dev\Robos\robos-khaos\Robos.Khaos\UT.Robotics.Server\bin\Debug\net7.0\UTService.dll",
-//    @"C:\Users\xiaox\AppData\Local\Robos.UpdateService\UTService\1.0.3" ,
-//    "True" ,
-//    "",
-//};
-
-
 internal class Program
 {
     private static readonly TextWriter _logger = File.CreateText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"update_{DateTime.Now:yyyy_MM_dd_HH_mm_ss}.log"));
@@ -21,8 +12,16 @@ internal class Program
     private static bool _restart = false;
     private static string? _args = null;
 
+    //"C:\Dev\gitee\staiia\robos-khaos\Robos.Khaos\UT\bin\Debug\net7.0\UT.dll" "C:\Dev\gitee\staiia\robos-khaos\Robos.Khaos\UT\bin\Debug\net7.0" "C:\Users\xiaox\AppData\Local\UT\UpdateData\4.0.1" "True" ""
     private static void Main(string[] args)
     {
+        //args = new string[5];
+        //args[0] = @"C:\Dev\gitee\staiia\robos-khaos\Robos.Khaos\UT\bin\Debug\net7.0\UT.dll";
+        //args[1] = @"C:\Dev\gitee\staiia\robos-khaos\Robos.Khaos\UT\bin\Debug\net7.0";
+        //args[2] = @"C:\Users\xiaox\AppData\Local\UT\UpdateData\4.0.1";
+        //args[3] = @"True";
+        //args[4] = @"";
+
         if (args.Length < 3)
         {
             WriteLog("miss argument");

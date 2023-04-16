@@ -1,14 +1,15 @@
 ﻿namespace Lantern.Aus;
 
-public class AusUpdateResult
+public class AusUpdatePatch
 {
-    public AusUpdateResult(AusManifest manifest, AusManifest? patch, IReadOnlyList<AusFile>? files, bool isPrepared, bool? mapFileExtensions)
+    public static readonly AusUpdatePatch Empty = new(null, null, false, null);
+
+    public AusUpdatePatch(AusManifest? manifest, IReadOnlyList<AusFile>? files, bool isPrepared, bool? mapFileExtensions)
     {
-        Manifest = manifest;
-        Patch = patch!;
+        Manifest = manifest!;
 
         UpdateFiles = new List<AusFile>();
-        if (patch == null || files == null || files.Count == 0)
+        if (manifest == null || files == null || files.Count == 0)
         {
             UpdateFiles = new List<AusFile>();
             CanUpdate = false;
@@ -26,17 +27,12 @@ public class AusUpdateResult
     /// <summary>
     /// Update patch
     /// </summary>
-    public AusManifest Patch { get; }
-
-    /// <summary>
-    /// Current file manifest
-    /// </summary>
     public AusManifest Manifest { get; }
 
     public bool? MapFileExtensions { get; }
 
     public bool CanUpdate { get; }
-    public bool IsPrepared { get; }
+    public bool IsPrepared { get; internal set; }
 
     public IReadOnlyList<AusFile> UpdateFiles { get; }
 }

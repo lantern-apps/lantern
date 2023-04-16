@@ -11,11 +11,6 @@ public interface IAusUpdateManager : IDisposable
     AusManifest? Manifest { get;  } 
 
     /// <summary>
-    /// Update patch
-    /// </summary>
-    AusManifest? UpdateManifest { get; }
-
-    /// <summary>
     /// Mark sure manifest file is prepared
     /// </summary>
     /// <param name="cancellationToken"></param>
@@ -27,7 +22,7 @@ public interface IAusUpdateManager : IDisposable
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<AusUpdateResult> CheckForUpdateAsync(CancellationToken cancellationToken = default);
+    Task<AusUpdatePatch> CheckForUpdateAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Prepare update files
@@ -35,7 +30,7 @@ public interface IAusUpdateManager : IDisposable
     /// <param name="result"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task PrepareUpdateAsync(AusUpdateResult result, CancellationToken cancellationToken = default);
+    Task PrepareUpdateAsync(AusUpdatePatch patch, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Check and perform update if can update
@@ -63,12 +58,5 @@ public interface IAusUpdateManager : IDisposable
     /// </summary>
     /// <param name="version">Version</param>
     /// <param name="options">Launch options</param>
-    void LaunchUpdater(Version? version, LaunchUpdaterOptions? options = null);
-
-    /// <summary>
-    /// Launch updater program
-    /// </summary>
-    /// <param name="options">Launch options</param>
-    void LaunchUpdater(LaunchUpdaterOptions? options = null) => LaunchUpdater(null, options);
-
+    void LaunchUpdater(LaunchUpdaterOptions? options = null);
 }
