@@ -1,4 +1,5 @@
 ﻿using Lantern.Platform;
+using Lantern.Resources;
 using Lantern.Threading;
 using Microsoft.Extensions.Logging;
 using Microsoft.Web.WebView2.Core;
@@ -116,6 +117,7 @@ public partial class LanternApp : ILanternHost, ILanternApp
 
     private bool CheckWebView2Environment()
     {
+        const string WebView2DownloadLink = "https://go.microsoft.com/fwlink/p/?LinkId=2124703";
         string? version = null;
         try
         {
@@ -128,12 +130,14 @@ public partial class LanternApp : ILanternHost, ILanternApp
 
         if (_options.WebViewEnvironment.UninstallHanding == WebView2EnvironmentUninstallHanding.Exit)
         {
-            _dialogPlatform.Alert(null, "缺少运行环境", "系统缺少必要组件,无法启动");
+            _dialogPlatform.Alert(null, _options.AppName, SR.MissWebView2RuntimeManualInstallAlert);
             return false;
         }
 
-        if (!_dialogPlatform.Confirm(null, "缺少运行环境", "You must install or update 'Microsoft WebView2Runtime' to run this application.\r\nWould you like to download it now?"))
+        if (!_dialogPlatform.Confirm(null, _options.AppName, SR.MissWebView2RuntimeAutoInstallAlert))
+        {
             return false;
+        }
 
         var dir = Path.Combine(_options.UserDataFolder, "Setup");
         var path = Path.Combine(dir, "WebView2.exe");
@@ -146,17 +150,17 @@ public partial class LanternApp : ILanternHost, ILanternApp
             Directory.CreateDirectory(dir);
 
             using HttpClient httpClient = new();
-            using var stream = httpClient.GetStreamAsync("https://go.microsoft.com/fwlink/p/?LinkId=2124703").GetAwaiter().GetResult();
+            using var stream = httpClient.GetStreamAsync(WebView2DownloadLink).GetAwaiter().GetResult();
             using var fs = File.OpenWrite(path);
             stream.CopyTo(fs);
         }
         catch
         {
-            if (_dialogPlatform.Confirm(null, "缺少运行环境", "无法自动在线下载安装，请前往 https://go.microsoft.com/fwlink/p/?LinkId=2124703 下载WebView2运行时。"))
+            if (_dialogPlatform.Confirm(null, _options.AppName, SR.MissWebView2RuntimeManualInstallAlert))
             {
                 Process.Start(new ProcessStartInfo
                 {
-                    FileName = "https://go.microsoft.com/fwlink/p/?LinkId=2124703",
+                    FileName = WebView2DownloadLink,
                     UseShellExecute = true
                 });
             }
@@ -177,7 +181,7 @@ public partial class LanternApp : ILanternHost, ILanternApp
 
         if (string.IsNullOrWhiteSpace(version))
         {
-            _dialogPlatform.Alert(null, "缺少运行环境", "系统缺少必要组件,无法启动.");
+            _dialogPlatform.Alert(null, _options.AppName, SR.MissWebView2RuntimeManualInstallAlert);
             return false;
         }
         return true;

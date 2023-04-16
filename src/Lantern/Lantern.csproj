@@ -21,4 +21,22 @@
 		<ProjectReference Include="..\Lantern.Core\Lantern.Core.csproj" />
 		<ProjectReference Include="..\Lantern.Win32\Lantern.Win32.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Resources\SR.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>SR.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Resources\SR.zh.resx">
+	    <Generator></Generator>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Resources\SR.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>SR.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
 </Project>

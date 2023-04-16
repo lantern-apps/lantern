@@ -7,9 +7,7 @@
 		<Version>0.1.1</Version>
 		<Company>robos.cn</Company>
 		<RepositoryUrl></RepositoryUrl>
-		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-		<!--<PackageProjectUrl>https://robos.cn</PackageProjectUrl>-->
-		<!--<GenerateDocumentationFile>True</GenerateDocumentationFile>-->
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Description>.NET Automatic Update Service</Description>
 	</PropertyGroup>
 
