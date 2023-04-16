@@ -27,7 +27,7 @@ public partial class AusManifest
     {
         List<AusFile> updates = new();
 
-        if (package.Version <= Version)
+        if (package.Version.Equals(Version))
             return updates;
 
         foreach (var file in package.Files)

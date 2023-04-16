@@ -1,4 +1,5 @@
 ﻿using Lantern.Aus.Internal;
+using Microsoft.Extensions.Logging;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
@@ -147,7 +148,7 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
         using HttpClient httpClient = CreateHttpClient();
 
         var appinfo = await httpClient.GetApplicationInfoAsync(cancellationToken);
-        if (appinfo == null || appinfo.Version != Manifest!.Version)
+        if (appinfo == null || appinfo.Version == Manifest!.Version)
         {
             return AusUpdatePatch.Empty;
         }
@@ -254,8 +255,10 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
                 }
             }
         }
-        if (version == null || version < _version)
+        if (version == null || version == _version)
+        {
             return false;
+        }
 
         return IsUpdatePrepared(version);
     }
@@ -301,7 +304,7 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
         }
 
         EnsureUpdaterNotLaunched();
-        //EnsureUpdatePrepared(version);
+
         using var _ = EnsureLockFileAcquired();
 
         options ??= new();

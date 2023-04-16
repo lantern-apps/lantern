@@ -132,7 +132,7 @@ public partial class LanternApp : ILanternHost, ILanternApp
             return false;
         }
 
-        if (!_dialogPlatform.Confirm(null, "缺少运行环境", "系统缺少必要组件, 点击确定在线下载安装。"))
+        if (!_dialogPlatform.Confirm(null, "缺少运行环境", "You must install or update 'Microsoft WebView2Runtime' to run this application.\r\nWould you like to download it now?"))
             return false;
 
         var dir = Path.Combine(_options.UserDataFolder, "Setup");
