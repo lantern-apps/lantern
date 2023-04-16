@@ -1,5 +1,6 @@
 ﻿using Lantern.Platform;
 using Lantern.Threading;
+using Lantern.Windows;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -56,7 +57,7 @@ public class Win32Platform : IPlatformThreadingInterface, IWindowingPlatform, IN
     private const int SignalW = unchecked((int)0xdeadbeaf);
     private const int SignalL = unchecked((int)0x12345678);
 
-    public bool ShowNotification(string title, string? info) => TrayIconImpl.GetDefault()?.ShowNotification(title, info) ?? false;
+    public bool ShowNotification(string title, string? info, MessageIconType iconType = MessageIconType.None) => TrayIconImpl.GetDefault()?.ShowNotification(title, info, iconType) ?? false;
 
     public void Signal(DispatcherPriority priority)
     {

@@ -1,10 +1,12 @@
-﻿namespace Lantern.Platform;
+﻿using Lantern.Windows;
+
+namespace Lantern.Platform;
 
 public interface IDialogPlatform
 {
-    void Alert(IWindowImpl? parent, string caption, string message);
-    bool Ask(IWindowImpl? parent, string caption, string message);
-    bool Confirm(IWindowImpl? parent, string caption, string message);
+    void Alert(IWindowImpl? parent, string caption, string message, MessageIconType iconType = MessageIconType.None);
+    bool Ask(IWindowImpl? parent, string caption, string message, MessageIconType iconType = MessageIconType.None);
+    bool Confirm(IWindowImpl? parent, string caption, string message, MessageIconType iconType = MessageIconType.None);
 
     Task<string[]> OpenFileAsync(IWindowImpl? parent, FilePickerOpenOptions options);
     Task<string?> SaveFileAsync(IWindowImpl? parent, FilePickerSaveOptions options);

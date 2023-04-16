@@ -130,11 +130,11 @@ public partial class LanternApp : ILanternHost, ILanternApp
 
         if (_options.WebViewEnvironment.UninstallHanding == WebView2EnvironmentUninstallHanding.Exit)
         {
-            _dialogPlatform.Alert(null, _options.AppName, SR.MissWebView2RuntimeManualInstallAlert);
+            _dialogPlatform.Alert(null, _options.AppName, SR.MissWebView2RuntimeManualInstallAlert, Windows.MessageIconType.Waring);
             return false;
         }
 
-        if (!_dialogPlatform.Confirm(null, _options.AppName, SR.MissWebView2RuntimeAutoInstallAlert))
+        if (!_dialogPlatform.Ask(null, _options.AppName, SR.MissWebView2RuntimeAutoInstallAlert, Windows.MessageIconType.Question))
         {
             return false;
         }
@@ -156,7 +156,7 @@ public partial class LanternApp : ILanternHost, ILanternApp
         }
         catch
         {
-            if (_dialogPlatform.Confirm(null, _options.AppName, SR.MissWebView2RuntimeManualInstallAlert))
+            if (_dialogPlatform.Confirm(null, _options.AppName, SR.MissWebView2RuntimeManualInstallAlert, Windows.MessageIconType.Information))
             {
                 Process.Start(new ProcessStartInfo
                 {
@@ -181,7 +181,7 @@ public partial class LanternApp : ILanternHost, ILanternApp
 
         if (string.IsNullOrWhiteSpace(version))
         {
-            _dialogPlatform.Alert(null, _options.AppName, SR.MissWebView2RuntimeManualInstallAlert);
+            _dialogPlatform.Alert(null, _options.AppName, SR.MissWebView2RuntimeManualInstallAlert, Windows.MessageIconType.Waring);
             return false;
         }
         return true;

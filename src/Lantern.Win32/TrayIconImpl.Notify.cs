@@ -1,10 +1,11 @@
-﻿using static Lantern.Win32.Interop.NativeMethods;
+﻿using Lantern.Windows;
+using static Lantern.Win32.Interop.NativeMethods;
 
 namespace Lantern.Win32;
 
 public partial class TrayIconImpl
 {
-    public bool ShowNotification(string title, string? info)
+    public bool ShowNotification(string title, string? info, MessageIconType iconType = MessageIconType.None)
     {
         const int NOTIFYICON_VERSION = 0x03;
 
@@ -14,7 +15,14 @@ public partial class TrayIconImpl
         data.hWnd = Win32Platform.Instance.Handle;
         data.uFlags = NIF.ICON | NIF.TIP | NIF.INFO | NIF.SHOWTIP | NIF.MESSAGE;
         data.uTimeoutOrVersion = 10 * 1000 | NOTIFYICON_VERSION;
-        data.dwInfoFlags = NIIF.NONE;// NIIF.WARNING;
+        data.dwInfoFlags = iconType switch
+        {
+            MessageIconType.None => NIIF.NONE,
+            MessageIconType.Information => NIIF.INFO,
+            MessageIconType.Waring => NIIF.WARNING,
+            MessageIconType.Error => NIIF.ERROR,
+            _ => NIIF.NONE
+        };
         data.hIcon = _icon == 0 ? s_emptyIcon : _icon;
         data.uCallbackMessage = (int)WM_TRAYMOUSE;
         data.szTip = _tooltip!;

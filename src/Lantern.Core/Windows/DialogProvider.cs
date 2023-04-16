@@ -11,17 +11,17 @@ public class DialogProvider : IDialogProvider
         _dialogProvider = dialogProvider;
     }
 
-    public void Alert(IWindow? parent, string title, string body)
+    public void Alert(IWindow? parent, string title, string body, MessageIconType iconType = MessageIconType.None)
     {
         _dialogProvider.Alert(parent == null ? null : ((Window)parent).WindowImpl, title, body);
     }
 
-    public bool Ask(IWindow? parent, string title, string body)
+    public bool Ask(IWindow? parent, string title, string body, MessageIconType iconType = MessageIconType.None)
     {
         return _dialogProvider.Ask(parent == null ? null : ((Window)parent).WindowImpl, title, body);
     }
 
-    public bool Confirm(IWindow? parent, string title, string body)
+    public bool Confirm(IWindow? parent, string title, string body, MessageIconType iconType = MessageIconType.None)
     {
         return _dialogProvider.Confirm(parent == null ? null : ((Window)parent).WindowImpl, title, body);
     }
