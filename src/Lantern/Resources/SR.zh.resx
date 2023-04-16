@@ -118,9 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MissWebView2RuntimeAutoInstallAlert" xml:space="preserve">
-    <value>应用运行需要 'Microsoft Edge WebView2 Runtime'\r\n\r\n点击确定下载并安装?</value>
+    <value>应用运行需要 'Microsoft Edge WebView2 Runtime'
+
+点击确定下载并安装?</value>
   </data>
   <data name="MissWebView2RuntimeManualInstallAlert" xml:space="preserve">
-    <value>应用运行需要 'Microsoft Edge WebView2 Runtime'\r\n\r\n请前往 https://go.microsoft.com/fwlink/p/?LinkId=2124703 下载并安装</value>
+    <value>应用运行需要 'Microsoft Edge WebView2 Runtime'
+
+请前往 https://go.microsoft.com/fwlink/p/?LinkId=2124703 下载并安装</value>
   </data>
 </root>

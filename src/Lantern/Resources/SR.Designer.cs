@@ -61,7 +61,9 @@ namespace Lantern.Resources {
         }
         
         /// <summary>
-        ///   查找类似 You must install or update &apos;Microsoft Edge WebView2 Runtime&apos; to run this application.\r\n\r\nWould you like to download it and install? 的本地化字符串。
+        ///   查找类似 You must install or update &apos;Microsoft Edge WebView2 Runtime&apos; to run this application.
+        ///
+        ///Would you like to download it and install? 的本地化字符串。
         /// </summary>
         internal static string MissWebView2RuntimeAutoInstallAlert {
             get {
@@ -70,7 +72,9 @@ namespace Lantern.Resources {
         }
         
         /// <summary>
-        ///   查找类似 You must install or update &apos;Microsoft Edge WebView2 Runtime&apos; to run this application.\r\n\r\nplease goto &apos;https://go.microsoft.com/fwlink/p/?LinkId=2124703&apos; download it and install. 的本地化字符串。
+        ///   查找类似 You must install or update &apos;Microsoft Edge WebView2 Runtime&apos; to run this application.
+        ///
+        ///please goto &apos;https://go.microsoft.com/fwlink/p/?LinkId=2124703&apos; download it and install. 的本地化字符串。
         /// </summary>
         internal static string MissWebView2RuntimeManualInstallAlert {
             get {
