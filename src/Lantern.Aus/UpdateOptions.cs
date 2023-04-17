@@ -1,18 +1,18 @@
 ﻿using System.Reflection;
 
-namespace Lantern.Aus;
+namespace AutoUpdates;
 
 /// <inheritdoc/>
-public class AusUpdateOptions
+public class UpdateOptions
 {
     /// <inheritdoc/>
-    public AusUpdateOptions() { }
+    public UpdateOptions() { }
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="serverAddress">Aus Update Server Address</param>
-    public AusUpdateOptions(string serverAddress)
+    public UpdateOptions(string serverAddress)
     {
         ServerAddress = serverAddress;
     }

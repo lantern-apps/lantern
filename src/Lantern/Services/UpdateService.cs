@@ -1,4 +1,4 @@
-﻿using Lantern.Aus;
+﻿using AutoUpdates;
 using Lantern.Messaging;
 using Microsoft.Extensions.Logging;
 
@@ -8,7 +8,7 @@ public class UpdateService : ILanternService
 {
     private readonly UpdaterOptions _options;
     private readonly ILogger<UpdateService> _logger;
-    private readonly IAusUpdateManager _updateManager;
+    private readonly IUpdateManager _updateManager;
     private readonly IAppLifetime _lifetime;
     private readonly IEventEmitter _eventEmitter;
     private bool _disabled;
@@ -16,7 +16,7 @@ public class UpdateService : ILanternService
 
     public UpdateService(
         LanternOptions options,
-        IAusUpdateManager updateManager,
+        IUpdateManager updateManager,
         IAppLifetime lifetime,
         IEventEmitter eventEmitter,
         ILogger<UpdateService> logger)
@@ -28,7 +28,7 @@ public class UpdateService : ILanternService
         _logger = logger;
     }
 
-    public AusUpdatePatch? Patch { get; private set; }
+    public UpdatePatch? Patch { get; private set; }
 
     public void Initialize()
     {

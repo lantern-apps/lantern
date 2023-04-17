@@ -1,7 +1,7 @@
 ﻿using Lantern.Aus.Internal;
 using System.Text.Json.Serialization;
 
-namespace Lantern.Aus;
+namespace AutoUpdates;
 
 public class AusFile
 {

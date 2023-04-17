@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Lantern.Aus;
+namespace AutoUpdates;
 
 internal static class AssemblyExtensions
 {

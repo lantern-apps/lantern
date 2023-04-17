@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 
-namespace Lantern.Aus;
+namespace AutoUpdates;
 
 public partial class AusManifest
 {

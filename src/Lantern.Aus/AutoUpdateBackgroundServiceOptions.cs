@@ -1,6 +1,6 @@
-﻿namespace Lantern.Aus;
+﻿namespace AutoUpdates;
 
-public class AusBackgroundServiceOptions : AusUpdateOptions
+public class AutoUpdateBackgroundServiceOptions : UpdateOptions
 {
     public bool PerformUpdateOnStart { get; set; } = true;
     public bool PerformUpdateOnExit { get; set; } = true;

@@ -1,18 +1,18 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Lantern.Aus;
+namespace AutoUpdates;
 
-public class AusBackgroundService : BackgroundService
+public class AutoUpdateBackgroundService : BackgroundService
 {
     protected readonly ILogger _logger;
-    protected readonly AusBackgroundServiceOptions _options;
-    protected readonly IAusUpdateManager _updateManager;
+    protected readonly AutoUpdateBackgroundServiceOptions _options;
+    protected readonly IUpdateManager _updateManager;
 
-    public AusBackgroundService(
-        AusBackgroundServiceOptions options,
-        IAusUpdateManager updateManager,
-        ILogger<AusBackgroundService> logger)
+    public AutoUpdateBackgroundService(
+        AutoUpdateBackgroundServiceOptions options,
+        IUpdateManager updateManager,
+        ILogger<AutoUpdateBackgroundService> logger)
     {
         _options = options;
         _updateManager = updateManager;

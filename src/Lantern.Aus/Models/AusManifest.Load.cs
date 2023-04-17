@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.FileSystemGlobbing;
 using System.Text.Json;
 
-namespace Lantern.Aus;
+namespace AutoUpdates;
 
 public partial class AusManifest
 {

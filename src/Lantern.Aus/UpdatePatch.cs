@@ -1,10 +1,10 @@
-﻿namespace Lantern.Aus;
+﻿namespace AutoUpdates;
 
-public class AusUpdatePatch
+public class UpdatePatch
 {
-    public static readonly AusUpdatePatch Empty = new(null, null, false, null);
+    public static readonly UpdatePatch Empty = new(null, null, false, null);
 
-    public AusUpdatePatch(AusManifest? manifest, IReadOnlyList<AusFile>? files, bool isPrepared, bool? mapFileExtensions)
+    public UpdatePatch(AusManifest? manifest, IReadOnlyList<AusFile>? files, bool isPrepared, bool? mapFileExtensions)
     {
         Manifest = manifest!;
 

@@ -6,10 +6,10 @@ using System.Net.Http;
 using System.Reflection;
 using System.Text;
 
-namespace Lantern.Aus;
+namespace AutoUpdates;
 
 /// <inheritdoc/>
-public class AusUpdateManager : IAusUpdateManager, IDisposable
+public class UpdateManager : IUpdateManager, IDisposable
 {
     private const string UpdaterResourceName = "Lantern.Aus.Updater.exe";
     private const string ManifestName = ".manifest";
@@ -38,7 +38,7 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
     /// </summary>
     /// <param name="options"></param>
     /// <exception cref="ArgumentNullException"></exception>
-    public AusUpdateManager(AusUpdateOptions options)
+    public UpdateManager(UpdateOptions options)
     {
         Assembly assembly = Assembly.GetEntryAssembly()!;
         _appName = options.AppName ?? assembly.GetName().Name!;
@@ -145,32 +145,44 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
     {
         using HttpClient httpClient = CreateHttpClient();
         var appinfo = await httpClient.GetApplicationInfoAsync(cancellationToken);
-        return appinfo?.Version;
+        return appinfo?.GetLatestVersion()?.Version;
     }
 
     /// <inheritdoc/>
-    public async Task<AusUpdatePatch> CheckForUpdateAsync(CancellationToken cancellationToken = default)
+    public async Task<UpdatePatch> CheckForUpdateAsync(CancellationToken cancellationToken = default)
     {
         await EnsurePrepareManifestAsync(cancellationToken);
 
         using HttpClient httpClient = CreateHttpClient();
 
         var appinfo = await httpClient.GetApplicationInfoAsync(cancellationToken);
-        if (appinfo == null || appinfo.Version == Manifest!.Version)
+
+        if(appinfo == null)
         {
-            return AusUpdatePatch.Empty;
+            return UpdatePatch.Empty;
         }
 
-        var remote = await httpClient.GetManifestAsync(appinfo.Version, cancellationToken);
+        var version = appinfo.GetLatestVersion();
+        if(version == null)
+        {
+            return UpdatePatch.Empty;
+        }
+
+        if (version.Version == Manifest!.Version)
+        {
+            return UpdatePatch.Empty;
+        }
+
+        var remote = await httpClient.GetManifestAsync(version.Version, cancellationToken);
 
         if (remote == null)
         {
-            return AusUpdatePatch.Empty;
+            return UpdatePatch.Empty;
         }
 
         var files = Manifest.CheckForUpdates(remote);
 
-        return new AusUpdatePatch(remote, files, IsUpdatePrepared(remote.Version), appinfo.MapFileExtensions);
+        return new UpdatePatch(remote, files, IsUpdatePrepared(remote.Version), version.MapFileExtensions);
     }
 
     /// <inheritdoc/>
@@ -192,7 +204,7 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
     }
 
     /// <inheritdoc/>
-    public async Task PrepareUpdateAsync(AusUpdatePatch patch, CancellationToken cancellationToken = default)
+    public async Task PrepareUpdateAsync(UpdatePatch patch, CancellationToken cancellationToken = default)
     {
         EnsureNotDisposed();
 
@@ -418,7 +430,7 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
     {
         if (!_updateUrlValid)
         {
-            throw new AusException("Invaild update url.", null);
+            throw new UpdateException("Invaild update url.", null);
         }
 
         return new HttpClient()

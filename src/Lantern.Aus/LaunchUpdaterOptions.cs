@@ -1,4 +1,4 @@
-﻿namespace Lantern.Aus;
+﻿namespace AutoUpdates;
 
 public class LaunchUpdaterOptions
 {

@@ -1,26 +1,26 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Lantern.Aus;
+namespace AutoUpdates;
 
 /// <inheritdoc/>
-public static class AusUpdateServiceCollectionExtensions
+public static class AutoUpdatesServiceCollectionExtensions
 {
     /// <summary>
     /// Add automatic update background service
     /// </summary>
     /// <exception cref="ArgumentNullException"></exception>
-    public static IServiceCollection AddAusBackgroundService(this IServiceCollection services, Action<AusBackgroundServiceOptions> optionsAction)
+    public static IServiceCollection AddAutoUpdateBackgroundService(this IServiceCollection services, Action<AutoUpdateBackgroundServiceOptions> optionsAction)
     {
         if (optionsAction == null)
             throw new ArgumentNullException(nameof(optionsAction));
 
-        AusBackgroundServiceOptions options = new();
+        AutoUpdateBackgroundServiceOptions options = new();
         optionsAction(options);
 
-        services.AddAusUpdateManager(options);
+        services.AddAutoUpdateManager(options);
 
         services.AddSingleton(options);
-        services.AddHostedService<AusBackgroundService>();
+        services.AddHostedService<AutoUpdateBackgroundService>();
 
         return services;
     }
@@ -29,22 +29,22 @@ public static class AusUpdateServiceCollectionExtensions
     /// Add automatic update manager
     /// </summary>
     /// <exception cref="ArgumentNullException"></exception>
-    public static IServiceCollection AddAusUpdateManager(this IServiceCollection services, Action<AusUpdateOptions> optionsAction)
+    public static IServiceCollection AddAutoUpdateManager(this IServiceCollection services, Action<UpdateOptions> optionsAction)
     {
         if (optionsAction == null)
             throw new ArgumentNullException(nameof(optionsAction));
 
-        AusUpdateOptions options = new();
+        UpdateOptions options = new();
         optionsAction(options);
 
-        return services.AddAusUpdateManager(options);
+        return services.AddAutoUpdateManager(options);
     }
 
     /// <summary>
     /// Add automatic update manager
     /// </summary>
     /// <exception cref="ArgumentNullException"></exception>
-    public static IServiceCollection AddAusUpdateManager(this IServiceCollection services, AusUpdateOptions options)
+    public static IServiceCollection AddAutoUpdateManager(this IServiceCollection services, UpdateOptions options)
     {
         if (options == null)
             throw new ArgumentNullException(nameof(options));
@@ -52,7 +52,7 @@ public static class AusUpdateServiceCollectionExtensions
         options.Validate();
 
         services.AddSingleton(options);
-        services.AddSingleton<IAusUpdateManager, AusUpdateManager>();
+        services.AddSingleton<IUpdateManager, UpdateManager>();
 
         return services;
     }

@@ -1,7 +1,7 @@
 ﻿using Lantern.Aus.Internal;
 using System.Net.Http.Json;
 
-namespace Lantern.Aus;
+namespace AutoUpdates;
 
 internal static class HttpClientExtensions
 {
@@ -17,7 +17,7 @@ internal static class HttpClientExtensions
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                 return null;
             else
-                throw new AusException(response.StatusCode.ToString(), response.ReasonPhrase);
+                throw new UpdateException(response.StatusCode.ToString(), response.ReasonPhrase);
         }
     }
 
@@ -33,7 +33,7 @@ internal static class HttpClientExtensions
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                 return null;
             else
-                throw new AusException(response.StatusCode.ToString(), response.ReasonPhrase);
+                throw new UpdateException(response.StatusCode.ToString(), response.ReasonPhrase);
         }
     }
 

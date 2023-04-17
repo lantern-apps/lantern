@@ -1,5 +1,5 @@
-﻿using Calls;
-using Lantern.Aus;
+﻿using AutoUpdates;
+using Calls;
 using Lantern.Controllers;
 using Lantern.Messaging;
 using Lantern.Services;
@@ -315,7 +315,7 @@ public class LanternAppHostBuilder : ILanternHostBuilder
             _lanternOptions.Updater.UpdateDataPath = ValidationHelper.ValidatePathQualified(_lanternOptions.Updater.UpdateDataPath);
         }
 
-        _services.AddSingleton(new AusUpdateOptions
+        _services.AddSingleton(new UpdateOptions
         {
             Exclusives = _lanternOptions.Updater.Exclusives,
             Version = _lanternOptions.Version,
@@ -324,7 +324,7 @@ public class LanternAppHostBuilder : ILanternHostBuilder
             ServerAddress = _lanternOptions.Updater.ServerAddress,
             TempFilePath = _lanternOptions.Updater.UpdateDataPath,
         });
-        _services.AddSingleton<IAusUpdateManager, AusUpdateManager>();
+        _services.AddSingleton<IUpdateManager, UpdateManager>();
     }
 
     private void BuildWindowOptions()

@@ -1,9 +1,9 @@
-﻿namespace Lantern.Aus;
+﻿namespace AutoUpdates;
 
 /// <summary>
 /// Automatic Update Manager
 /// </summary>
-public interface IAusUpdateManager : IDisposable
+public interface IUpdateManager : IDisposable
 {
     /// <summary>
     /// Current manifest
@@ -29,7 +29,7 @@ public interface IAusUpdateManager : IDisposable
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<AusUpdatePatch> CheckForUpdateAsync(CancellationToken cancellationToken = default);
+    Task<UpdatePatch> CheckForUpdateAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Prepare update files
@@ -37,7 +37,7 @@ public interface IAusUpdateManager : IDisposable
     /// <param name="result"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task PrepareUpdateAsync(AusUpdatePatch patch, CancellationToken cancellationToken = default);
+    Task PrepareUpdateAsync(UpdatePatch patch, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Check and perform update if can update
