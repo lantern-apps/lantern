@@ -1,8 +1,6 @@
 ﻿using Lantern.Aus.Internal;
-using Microsoft.Extensions.Logging;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Net.Http;
 using System.Reflection;
 using System.Text;
 
@@ -11,7 +9,7 @@ namespace AutoUpdates;
 /// <inheritdoc/>
 public class UpdateManager : IUpdateManager, IDisposable
 {
-    private const string UpdaterResourceName = "Lantern.Aus.Updater.exe";
+    private const string UpdaterResourceName = "AutoUpdates.Updater.exe";
     private const string ManifestName = ".manifest";
     private const string FileExtensions = ".deploy";
 
