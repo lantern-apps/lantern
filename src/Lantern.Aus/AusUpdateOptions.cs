@@ -23,7 +23,7 @@ public class AusUpdateOptions
     public string ServerAddress { get; set; } = null!;
 
     /// <summary>
-    /// Program package name, the default value is entry assembly name.
+    /// Application name, the default value is entry assembly name.
     /// </summary>
     public string? AppName { get; set; }
 
