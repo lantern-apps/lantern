@@ -85,14 +85,12 @@ internal class Program
         }
 
         // Copy over the package contents
-        WriteLog($"source directory {_sourceDir}");
-        WriteLog($"target directory {_targetDir}");
+        WriteLog($"copy \"{_sourceDir}\" to \"{_targetDir}\"");
 
         CopyDirectory(_sourceDir, _targetDir);
 
         if (_restart)
         {
-            WriteLog($"restart {_entryFile}");
             Restart(_targetDir);
         }
 
