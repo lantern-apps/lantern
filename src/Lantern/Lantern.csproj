@@ -17,7 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Lantern.Aus\AutoUpdates.csproj" />
+		<ProjectReference Include="..\AutoUpdates\AutoUpdates.csproj" />
 		<ProjectReference Include="..\Lantern.Core\Lantern.Core.csproj" />
 		<ProjectReference Include="..\Lantern.Win32\Lantern.Win32.csproj" />
 	</ItemGroup>
