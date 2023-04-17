@@ -33,7 +33,7 @@ public class UpdaterController : UpdaterControllerBase
 
     public override void Launch(IpcContext context)
     {
-        _updateManager.LaunchUpdater(new LaunchUpdaterOptions
+        _updateManager.LaunchUpdater(null, new LaunchUpdaterOptions
         {
             Launched = () => _lifetime.StopApplication()
         });

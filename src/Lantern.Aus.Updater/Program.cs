@@ -92,6 +92,7 @@ internal class Program
 
         if (_restart)
         {
+            WriteLog($"restart {_entryFile}");
             Restart(_targetDir);
         }
 

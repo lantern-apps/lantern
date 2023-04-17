@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Net.Http;
 using System.Reflection;
 using System.Text;
 
@@ -12,6 +13,7 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
 {
     private const string UpdaterResourceName = "Lantern.Aus.Updater.exe";
     private const string ManifestName = ".manifest";
+    private const string PDBFile = "*.pdb";
     private const string FileExtensions = ".deploy";
 
     private static readonly string _updateDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -47,13 +49,14 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
 
         if (options.Exclusives == null)
         {
-            _exclusiveFiles = new string[] { ManifestName };
+            _exclusiveFiles = new string[] { ManifestName, PDBFile };
         }
         else
         {
-            _exclusiveFiles = new string[options.Exclusives.Count + 1];
+            _exclusiveFiles = new string[options.Exclusives.Count + 2];
             _exclusiveFiles[0] = ManifestName;
-            options.Exclusives.CopyTo(_exclusiveFiles, 1);
+            _exclusiveFiles[1] = PDBFile;
+            options.Exclusives.CopyTo(_exclusiveFiles, 2);
         }
 
         _storageDirPath = options.TempFilePath ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), _appName, "Update");
@@ -140,6 +143,13 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
         Manifest.SaveAs(_manifestFilePath);
     }
 
+    public async Task<Version?> GetLatestVersionAsync(CancellationToken cancellationToken)
+    {
+        using HttpClient httpClient = CreateHttpClient();
+        var appinfo = await httpClient.GetApplicationInfoAsync(cancellationToken);
+        return appinfo?.Version;
+    }
+
     /// <inheritdoc/>
     public async Task<AusUpdatePatch> CheckForUpdateAsync(CancellationToken cancellationToken = default)
     {
@@ -180,7 +190,7 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
 
         await PrepareUpdateAsync(patch, cancellationToken);
 
-        LaunchUpdater();
+        LaunchUpdater(patch.Manifest.Version);
     }
 
     /// <inheritdoc/>
@@ -272,8 +282,7 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
 
         var manifestFilePath = Path.Combine(baseDir, ManifestName);
 
-        if (!File.Exists(manifestFilePath) ||
-            !File.Exists(_updaterFilePath))
+        if (!File.Exists(manifestFilePath) || !File.Exists(_updaterFilePath))
             return false;
 
         var manifest = AusManifest.ParseFile(manifestFilePath);
@@ -294,11 +303,11 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
     }
 
     /// <inheritdoc/>
-    public void LaunchUpdater(LaunchUpdaterOptions? options = null)
+    public void LaunchUpdater(Version? version, LaunchUpdaterOptions? options = null)
     {
         EnsureNotDisposed();
 
-        if (!HasUpdatePrepared(out Version version))
+        if (version == null && !HasUpdatePrepared(out version))
         {
             return;
         }

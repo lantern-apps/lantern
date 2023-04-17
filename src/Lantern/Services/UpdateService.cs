@@ -122,7 +122,7 @@ public class UpdateService : ILanternService
             {
                 _logger.LogInformation($"launching update {version}");
 
-                _updateManager.LaunchUpdater(new LaunchUpdaterOptions
+                _updateManager.LaunchUpdater(version, new LaunchUpdaterOptions
                 {
                     Restart = restart,
                     Launched = OnUpdateLaunched,

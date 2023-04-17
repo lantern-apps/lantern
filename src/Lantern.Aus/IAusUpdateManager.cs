@@ -8,7 +8,14 @@ public interface IAusUpdateManager : IDisposable
     /// <summary>
     /// Current manifest
     /// </summary>
-    AusManifest? Manifest { get;  } 
+    AusManifest? Manifest { get; }
+
+    /// <summary>
+    /// Get latest version number from server
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<Version?> GetLatestVersionAsync(CancellationToken cancellationToken);
 
     /// <summary>
     /// Mark sure manifest file is prepared
@@ -58,5 +65,5 @@ public interface IAusUpdateManager : IDisposable
     /// </summary>
     /// <param name="version">Version</param>
     /// <param name="options">Launch options</param>
-    void LaunchUpdater(LaunchUpdaterOptions? options = null);
+    void LaunchUpdater(Version? version, LaunchUpdaterOptions? options = null);
 }
