@@ -9,7 +9,7 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1661.34" />
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1722.45" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\Lantern.Base\Lantern.Base.csproj" />
