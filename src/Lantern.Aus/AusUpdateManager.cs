@@ -13,7 +13,6 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
 {
     private const string UpdaterResourceName = "Lantern.Aus.Updater.exe";
     private const string ManifestName = ".manifest";
-    private const string PDBFile = "*.pdb";
     private const string FileExtensions = ".deploy";
 
     private static readonly string _updateDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -49,14 +48,13 @@ public class AusUpdateManager : IAusUpdateManager, IDisposable
 
         if (options.Exclusives == null)
         {
-            _exclusiveFiles = new string[] { ManifestName, PDBFile };
+            _exclusiveFiles = new string[] { ManifestName };
         }
         else
         {
-            _exclusiveFiles = new string[options.Exclusives.Count + 2];
+            _exclusiveFiles = new string[options.Exclusives.Count + 1];
             _exclusiveFiles[0] = ManifestName;
-            _exclusiveFiles[1] = PDBFile;
-            options.Exclusives.CopyTo(_exclusiveFiles, 2);
+            options.Exclusives.CopyTo(_exclusiveFiles, 1);
         }
 
         _storageDirPath = options.TempFilePath ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), _appName, "Update");
