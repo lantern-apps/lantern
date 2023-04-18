@@ -1,0 +1,1 @@
+﻿dotnet tool install --global Lantern.Cli --version 1.0.0-alpha1.230418.1
