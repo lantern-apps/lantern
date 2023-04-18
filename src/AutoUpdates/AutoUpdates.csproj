@@ -4,11 +4,12 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>0.1.1</Version>
-		<Company>robos.cn</Company>
-		<RepositoryUrl></RepositoryUrl>
+		<RepositoryUrl>https://github.com/lantern-apps/lantern</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/lantern-apps/lantern</PackageProjectUrl>
+		<Version>1.0.0-alpha1.230418.1</Version>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Description>.NET Automatic Update Service</Description>
+		<PackageOutputPath>./nupkg</PackageOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>

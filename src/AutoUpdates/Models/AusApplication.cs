@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace AutoUpdates;
 
@@ -29,6 +30,12 @@ public class AusApplication
         }
 
         return version;
+    }
+
+    public void SaveAs(string path)
+    {
+        var json = JsonSerializer.Serialize(this, JsonSerializerOptionsHelper.SerializerOptions);
+        File.WriteAllText(path, json);
     }
 }
 

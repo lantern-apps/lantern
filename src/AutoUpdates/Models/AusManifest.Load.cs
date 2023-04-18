@@ -73,6 +73,6 @@ public partial class AusManifest
             throw new FileNotFoundException(filename);
 
         var json = File.ReadAllText(filename);
-        return JsonSerializer.Deserialize<AusManifest>(json, SerializerOptions)!;
+        return JsonSerializer.Deserialize<AusManifest>(json,  JsonSerializerOptionsHelper.SerializerOptions)!;
     }
 }

@@ -1,18 +1,10 @@
-﻿using System.Text.Encodings.Web;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Unicode;
 
 namespace AutoUpdates;
 
 public partial class AusManifest
 {
-    private static readonly JsonSerializerOptions SerializerOptions = new()
-    {
-        WriteIndented = true,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-    };
 
     [JsonPropertyName("name")]
     public required string Name { get; set; }
@@ -43,7 +35,7 @@ public partial class AusManifest
 
     public void SaveAs(string filename)
     {
-        var json = JsonSerializer.Serialize(this, SerializerOptions);
+        var json = JsonSerializer.Serialize(this, JsonSerializerOptionsHelper.SerializerOptions);
         File.WriteAllText(filename, json);
     }
 

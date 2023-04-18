@@ -160,7 +160,7 @@ internal class Program
         }
     }
 
-    static void CopyDirectory(string sourceDirPath, string destDirPath, bool root = true)
+    static void CopyDirectory(string sourceDirPath, string destDirPath)
     {
         Directory.CreateDirectory(destDirPath);
 
@@ -168,8 +168,6 @@ internal class Program
         foreach (var sourceFilePath in Directory.GetFiles(sourceDirPath))
         {
             var destFileName = Path.GetFileName(sourceFilePath);
-            if (root && destFileName == ".patch")
-                continue;
 
             var destFilePath = Path.Combine(destDirPath, destFileName);
             File.Copy(sourceFilePath, destFilePath, true);
@@ -180,7 +178,7 @@ internal class Program
         {
             var destSubDirName = Path.GetFileName(sourceSubDirPath);
             var destSubDirPath = Path.Combine(destDirPath, destSubDirName);
-            CopyDirectory(sourceSubDirPath, destSubDirPath, false);
+            CopyDirectory(sourceSubDirPath, destSubDirPath);
         }
     }
 
