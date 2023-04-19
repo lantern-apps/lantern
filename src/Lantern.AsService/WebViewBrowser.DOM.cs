@@ -40,22 +40,16 @@ public partial class WebViewBrowser
 
     public Task ClickAsync(string selector)
     {
-        return InvokeAsync(() =>
-        {
-            return _webview.ExecuteScriptAsync($"document.querySelector(\"{selector}\")?.click()");
-        });
+        return InvokeAsync(() => _webview.ExecuteScriptAsync($"document.querySelector(\"{selector}\")?.click()"));
     }
 
     public Task FillAsync(string selector, string content)
     {
-        return InvokeAsync(() =>
-        {
-            return _webview.ExecuteScriptAsync($"document.querySelector(\"{selector}\").value = '{content}'");
-        });
+        return InvokeAsync(() => _webview.ExecuteScriptAsync($"document.querySelector(\"{selector}\").value = '{content}'"));
     }
 
     public Task<bool> IsVisibleAsync(string selector)
     {
-        return EvaluateAsync<bool>($"document.querySelectorAll(\"{selector}\").length > 0");
+        return InvokeAsync(() => EvaluateAsync<bool>($"document.querySelectorAll(\"{selector}\").length > 0"));
     }
 }
