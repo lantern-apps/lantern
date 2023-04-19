@@ -1,14 +1,24 @@
 ﻿using AutoUpdates;
 using System.CommandLine;
+using System.Diagnostics;
 
 namespace Lantern.Cli;
 
 class Program
 {
+    //mage --name UT --targetDir ./publish --version 4.0.1 --mapFileExtension
     static int Main(string[] args)
     {
         RootCommand rootCommand = new("Lantern Cli");
 
+        CreateMageCommand(rootCommand);
+        CreatePublishCommand(rootCommand);
+
+        return rootCommand.InvokeAsync(args).Result;
+    }
+
+    private static void CreateMageCommand(RootCommand rootCommand)
+    {
         Option<string> nameOption = new("--name", "The application name");
         Option<string> targetDirOption = new(name: "--targetDir", description: "The target directory.", getDefaultValue: () => ".\\publish");
         Option<bool> mapFileExtensionOptions = new("--mapFileExtension", "Map file extension.");
@@ -41,8 +51,14 @@ class Program
                                versionOption,
                                targetDirOption,
                                mapFileExtensionOptions);
+    }
 
-        return rootCommand.InvokeAsync(args).Result;
+    private static void CreatePublishCommand(RootCommand rootCommand)
+    {
+        Command command = new("publish", "Manifest Generation and Editing Tool.");
+
+        rootCommand.AddCommand(command);
+        command.SetHandler(Publish);
     }
 
     internal static void New(string projectName)
@@ -85,6 +101,19 @@ class Program
         Console.WriteLine($"Generate application manifest");
         Console.WriteLine("Generate completed.");
         Console.WriteLine();
+    }
+
+    internal static Task Publish()
+    {
+        return Process.Start(new ProcessStartInfo
+        {
+            WorkingDirectory = Environment.CurrentDirectory,
+            FileName = "dotnet",
+            Arguments = "publish --self-contained -c release -p:PublishSingleFile=true -p:TrimmerRemoveSymbols=true -p:DebuggerSupport=false -p:TrimMode=partial -p:PublishTrimmed=true -p:RuntimeIdentifier=win-x64",
+            UseShellExecute = false,
+            CreateNoWindow = false,
+
+        }).WaitForExitAsync();
     }
 
     static void CopyDirectory(string sourceDirPath, string destDirPath, bool mapFileExtension)
