@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Lantern.Cli": {
-      "commandName": "Project",
-      "commandLineArgs": "mage --name UT --targetDir ./publish --version 4.0.1 --mapFileExtension"
-    }
-  }
-}
