@@ -71,7 +71,7 @@ public class AutoUpdateBackgroundService : BackgroundService
         }
     }
 
-    private async Task CheckSetupUpdate(bool restart)
+    private Task CheckSetupUpdate(bool restart)
     {
         try
         {
@@ -90,6 +90,8 @@ public class AutoUpdateBackgroundService : BackgroundService
         {
             _logger.LogError(ex, "在检查更像时发生异常");
         }
+
+        return Task.CompletedTask;
     }
 
     /// <summary>
