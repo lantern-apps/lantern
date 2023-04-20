@@ -214,7 +214,9 @@ public class WebViewWindow : Window, IWebViewWindow
             new CoreWebView2EnvironmentOptions
             {
 #if DEBUG
-                AdditionalBrowserArguments = "--remote-debugging-port=9222",
+                AdditionalBrowserArguments = "--disable-web-security --remote-debugging-port=9222",
+#else
+                AdditionalBrowserArguments = "--disable-web-security",
 #endif
                 Language = _environmentOptions.Language,
                 AllowSingleSignOnUsingOSPrimaryAccount = false,
