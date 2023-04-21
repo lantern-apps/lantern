@@ -221,7 +221,7 @@ internal partial class IpcImpl
         }
         catch (Exception ex)
         {
-            _logger.LogWarning($"Ipc('{window.Name}') -> '{request.Name}' handle exception\r\n{ex.Message}");
+            _logger.LogWarning(ex, $"Ipc('{window.Name}') -> '{request.Name}' handle exception\r\n{ex.Message}");
             error = ex.Message;
             goto send;
         }
@@ -255,7 +255,7 @@ internal partial class IpcImpl
 
     private readonly struct Invocation
     {
-        public Invocation(IWebViewWindow window,string request)
+        public Invocation(IWebViewWindow window, string request)
         {
             Window = window;
             Request = request;
