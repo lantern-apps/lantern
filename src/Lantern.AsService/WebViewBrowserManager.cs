@@ -11,18 +11,15 @@ public class WebBrowserManager : IWebBrowserManager
     private readonly ILoggerFactory _loggerFactory;
     private readonly IWindowingPlatform _windowingPlatform;
     private readonly WebViewEnvironmentOptions _environmentOptions;
-    private readonly IServiceProvider _serviceProvider;
 
     public WebBrowserManager(
         WebViewEnvironmentOptions environmentOptions,
         ILoggerFactory loggerFactory,
-        IWindowingPlatform windowingPlatform,
-        IServiceProvider serviceProvider)
+        IWindowingPlatform windowingPlatform)
     {
         _loggerFactory = loggerFactory;
         _windowingPlatform = windowingPlatform;
         _environmentOptions = environmentOptions;
-        _serviceProvider = serviceProvider;
     }
 
     public async Task<WebViewBrowser> CreateAsync(WebViewWindowOptions windowOptions)
@@ -49,7 +46,6 @@ public class WebBrowserManager : IWebBrowserManager
         var window = new WebBrowserWindow(
             _environmentOptions,
             windowOptions,
-            _serviceProvider,
             _windowingPlatform.CreateWindow(),
             logger);
 
