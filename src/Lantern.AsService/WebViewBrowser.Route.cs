@@ -1,5 +1,4 @@
-﻿using Lantern.AsService;
-using Microsoft.Web.WebView2.Core;
+﻿using Microsoft.Web.WebView2.Core;
 
 namespace Lantern.AsService;
 
@@ -10,7 +9,6 @@ public partial class WebViewBrowser
     public Task RouteAbortAsync(string urlOrPredicate) => RouteAsync(urlOrPredicate, WebViewResourceType.All, route => route.AbortAsync());
     public Task RouteAbortAsync(string urlOrPredicate, WebViewResourceType resourceType) => RouteAsync(urlOrPredicate, resourceType, route => route.AbortAsync());
     public Task RouteAbortAsync(WebViewResourceType resourceType) => RouteAsync("**", resourceType, route => route.AbortAsync());
-
     public Task RouteAsync(string urlOrPredicate, Action<WebViewRoute> action) => RouteAsync(urlOrPredicate, WebViewResourceType.All, action);
 
     public Task RouteAsync(string urlOrPredicate, WebViewResourceType resourceType, Action<WebViewRoute> action)

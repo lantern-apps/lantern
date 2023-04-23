@@ -12,10 +12,9 @@ public class WebBrowserWindow : WebViewWindow
     public WebBrowserWindow(
         WebViewEnvironmentOptions environmentOptions,
         WebViewWindowOptions windowOptions,
-        IServiceProvider serviceProvider,
         IWindowImpl windowImpl,
         ILogger<WebBrowserWindow> logger)
-        : base(environmentOptions, windowOptions, null, serviceProvider, windowImpl)
+        : base(environmentOptions, windowOptions, null, windowImpl)
     {
         _logger = logger;
     }

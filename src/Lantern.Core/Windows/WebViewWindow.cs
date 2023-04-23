@@ -1,6 +1,5 @@
 ﻿using Lantern.Platform;
 using Lantern.Threading;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Web.WebView2.Core;
 using System.Diagnostics;
 using System.Drawing;
@@ -15,7 +14,6 @@ public class WebViewWindow : Window, IWebViewWindow
 
     private readonly WebViewEnvironmentOptions _environmentOptions;
     private readonly WebViewWindowOptions _windowOptions;
-    private readonly IServiceProvider _serviceProvider;
     private readonly IWindowManager? _windowManager;
     private readonly TaskCompletionSource _cts = new();
     private readonly CancellationTokenSource _closedSource = new();
@@ -29,7 +27,6 @@ public class WebViewWindow : Window, IWebViewWindow
         WebViewEnvironmentOptions environmentOptions,
         WebViewWindowOptions windowOptions,
         IWindowManager? windowManager,
-        IServiceProvider serviceProvider,
         IWindowImpl windowImpl)
         : base(windowImpl)
     {
@@ -37,7 +34,6 @@ public class WebViewWindow : Window, IWebViewWindow
         _windowOptions = windowOptions;
         _name = windowOptions.Name;
         _windowManager = windowManager;
-        _serviceProvider = serviceProvider;
         Title = windowOptions.Title;
 
         MaxSize = new LogisticSize(windowOptions.MaxWidth ?? 0, windowOptions.MaxHeight ?? 0);
@@ -118,7 +114,6 @@ public class WebViewWindow : Window, IWebViewWindow
             }
         }
     }
-
 
     protected override void OnResized() => ResizeWebViewBounds();
 
@@ -222,19 +217,9 @@ public class WebViewWindow : Window, IWebViewWindow
                 AllowSingleSignOnUsingOSPrimaryAccount = false,
                 IsCustomCrashReportingEnabled = false,
                 ExclusiveUserDataFolderAccess = false,
-                //CustomSchemeRegistrations = 
-                //{
-                //    new CoreWebView2CustomSchemeRegistration("lantern")
-                //    {
-
-                //    }
-                //}
             });
 
-        //var controllerOptions = _environment.CreateCoreWebView2ControllerOptions();
-        //controllerOptions.ProfileName = "UT";
-        //controllerOptions.ScriptLocale = Thread.CurrentThread.CurrentUICulture.Name;
-        _controller = await _environment.CreateCoreWebView2ControllerAsync(WindowImpl.NativeHandle/*, controllerOptions*/); ;
+        _controller = await _environment.CreateCoreWebView2ControllerAsync(WindowImpl.NativeHandle);
         ResizeWebViewBounds();
         _controller.IsVisible = true;
 
@@ -247,6 +232,7 @@ public class WebViewWindow : Window, IWebViewWindow
         _webview.NewWindowRequested += OnWebViewNewWindowRequested;
         _webview.DocumentTitleChanged += OnWebViewDocumentTitleChanged;
         _webview.PermissionRequested += OnWebViewPermissionRequested;
+        _webview.WebResourceRequested += OnWebResourceRequested;
         _webview.WindowCloseRequested += (o, e) => Close(true);
         _webview.ProcessFailed += (o, e) => Close(true);
 
@@ -264,30 +250,27 @@ public class WebViewWindow : Window, IWebViewWindow
         _webview.Settings.IsWebMessageEnabled = _windowOptions.IsWebMessageEnabled;
         _webview.Settings.AreHostObjectsAllowed = _windowOptions.AreHostObjectsAllowed;
         _webview.Settings.IsBuiltInErrorPageEnabled = _windowOptions.IsBuiltInErrorPageEnabled;
+        _webview.Settings.AreHostObjectsAllowed = false;
 
-        if (_environmentOptions.HostObjects != null)
-        {
-            foreach (var hostObject in _environmentOptions.HostObjects)
-            {
-                var obj = _serviceProvider.GetRequiredService(hostObject.Value);
-                _webview.AddHostObjectToScript(hostObject.Key, obj);
-            }
-        }
 
         if (_environmentOptions.VirtualHosts != null && _environmentOptions.VirtualHosts.Count > 0)
         {
             foreach (var map in _environmentOptions.VirtualHosts)
                 _webview.SetVirtualHostNameToFolderMapping(map.HostName, map.FolderName, CoreWebView2HostResourceAccessKind.Allow);
         }
-        else
-        {
-            _webview.Settings.AreHostObjectsAllowed = false;
-        }
 
         if (_environmentOptions.JavaScriptsOnDocumentCreated != null)
         {
             foreach (var js in _environmentOptions.JavaScriptsOnDocumentCreated)
                 await _webview.AddScriptToExecuteOnDocumentCreatedAsync(js);
+        }
+
+        if (_environmentOptions.Filters != null)
+        {
+            foreach (var filter in _environmentOptions.Filters)
+            {
+                _webview.AddWebResourceRequestedFilter(filter.UrlOrPredicate, (CoreWebView2WebResourceContext)filter.ResourceType);
+            }
         }
 
         if (_windowOptions.IsWebMessageEnabled)
@@ -308,6 +291,29 @@ public class WebViewWindow : Window, IWebViewWindow
         }
 
         _cts.SetResult();
+    }
+
+    private void OnWebResourceRequested(object? sender, CoreWebView2WebResourceRequestedEventArgs e)
+    {
+        if (_environmentOptions.Filters == null)
+        {
+            return;
+        }
+
+        foreach (var filter in _environmentOptions.Filters)
+        {
+            if (filter.CanHandle(e.Request.Uri, (WebViewResourceType)e.ResourceContext))
+            {
+                var deferral = e.GetDeferral();
+
+                filter.HandleAsync(new WebViewRequestContext(_environment!, e)).ContinueWith(_ =>
+                {
+                    deferral.Complete();
+                }).ConfigureAwait(false);
+
+                break;
+            }
+        }
     }
 
     private void OnWebViewMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
