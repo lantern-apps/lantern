@@ -8,22 +8,16 @@ public class WindowManager : IWindowManager
     protected readonly List<WebViewWindow> _windows = new();
 
     private readonly WebViewEnvironmentOptions _envOptions;
-    private readonly IServiceProvider _services;
     protected readonly IWindowingPlatform _windowingPlatform;
 
-    public WindowManager(
-        WebViewEnvironmentOptions envOptions,
-        IServiceProvider services,
-        IWindowingPlatform windowingPlatform)
+    public WindowManager(WebViewEnvironmentOptions envOptions, IWindowingPlatform windowingPlatform)
     {
         _envOptions = envOptions;
-        _services = services;
         _windowingPlatform = windowingPlatform;
     }
 
     public IWebViewWindow? GetWindow(string name) => _windows.FirstOrDefault(x => x.Name == name);
     public IWebViewWindow? GetDefaultWindow() => _windows.FirstOrDefault();
-
     public IWebViewWindow[] GetAllWindows() => _windows.ToArray();
 
     public virtual async Task<IWebViewWindow> CreateWindowAsync(WebViewWindowOptions options)
@@ -51,7 +45,6 @@ public class WindowManager : IWindowManager
             environmentOptions: _envOptions,
             windowOptions: windowOptions,
             windowManager: this,
-            serviceProvider: _services,
             windowImpl: _windowingPlatform.CreateWindow());
 
         _windows.Add(window);
