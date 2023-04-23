@@ -15,8 +15,7 @@ internal class WindowService : WindowManager, ILanternService
         WebViewEnvironmentOptions envOptions,
         Ipc ipcService,
         IAppLifetime lifetime,
-        IServiceProvider services,
-        IWindowingPlatform windowingPlatform) : base(envOptions, services, windowingPlatform)
+        IWindowingPlatform windowingPlatform) : base(envOptions, windowingPlatform)
     {
         _options = options;
         _ipcService = ipcService;

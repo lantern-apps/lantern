@@ -128,7 +128,7 @@ public partial class LanternApp : ILanternHost, ILanternApp
         if (!string.IsNullOrWhiteSpace(version))
             return true;
 
-        if (_options.WebViewEnvironment.UninstallHanding == WebView2EnvironmentUninstallHanding.Exit)
+        if (_options.WebViewEnvironment.UninstallHanding == WebViewEnvironmentUninstallHanding.Exit)
         {
             _dialogPlatform.Alert(null, _options.AppName, SR.MissWebView2RuntimeManualInstallAlert, Windows.MessageIconType.Waring);
             return false;
