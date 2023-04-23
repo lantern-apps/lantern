@@ -94,8 +94,15 @@ internal class Program
             Restart(_targetDir);
         }
 
-        WriteLog("delete temp files");
-        Directory.Delete(_sourceDir, true);
+        try
+        {
+            Directory.Delete(_sourceDir, true);
+            WriteLog("delete temp files");
+        }
+        catch (Exception ex)
+        {
+            WriteLog($"delete temp files: {ex.Message}");
+        }
     }
 
     [DoesNotReturn]
