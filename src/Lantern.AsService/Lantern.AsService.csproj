@@ -4,6 +4,12 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	  <Version>1.0.0-alpha1.230510.1</Version>
+	  <RepositoryUrl>https://github.com/lantern-apps/lantern</RepositoryUrl>
+	  <PackageProjectUrl>https://github.com/lantern-apps/lantern</PackageProjectUrl>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	  <PackageOutputPath>./../../nupkg</PackageOutputPath>
   </PropertyGroup>
 
   <ItemGroup>

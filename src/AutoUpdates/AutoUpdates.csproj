@@ -9,7 +9,7 @@
 		<Version>1.0.0-alpha1.230418.1</Version>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Description>.NET Automatic Update Service</Description>
-		<PackageOutputPath>./nupkg</PackageOutputPath>
+		<PackageOutputPath>./../../nupkg</PackageOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>

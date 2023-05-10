@@ -266,6 +266,15 @@ public class LanternAppHostBuilder : ILanternHostBuilder
 
     public ILanternHost Build()
     {
+        ApplyConfigure();
+
+        ((ServiceCollection)Services).MakeReadOnly();
+        var services = ((ServiceCollection)Services).BuildServiceProvider();
+        return services.GetRequiredService<ILanternHost>();
+    }
+
+    public void ApplyConfigure()
+    {
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             Services.AddLanternWin32Platform();
 
@@ -291,10 +300,6 @@ public class LanternAppHostBuilder : ILanternHostBuilder
                 Url = DefaultStartUrl
             });
         }
-
-        ((ServiceCollection)Services).MakeReadOnly();
-        var services = ((ServiceCollection)Services).BuildServiceProvider();
-        return services.GetRequiredService<ILanternHost>();
     }
 
     private void BuildUpdaterOptions()
