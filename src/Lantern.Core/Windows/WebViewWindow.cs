@@ -209,9 +209,9 @@ public class WebViewWindow : Window, IWebViewWindow
             new CoreWebView2EnvironmentOptions
             {
 #if DEBUG
-                AdditionalBrowserArguments = "--disable-web-security --remote-debugging-port=9222",
+                AdditionalBrowserArguments = "--disable-web-security --enable-features=\"msWebView2EnableDraggableRegions\" --remote-debugging-port=9222",
 #else
-                AdditionalBrowserArguments = "--disable-web-security",
+                AdditionalBrowserArguments = "--disable-web-security --enable-features=\"msWebView2EnableDraggableRegions\"",
 #endif
                 Language = _environmentOptions.Language,
                 AllowSingleSignOnUsingOSPrimaryAccount = false,

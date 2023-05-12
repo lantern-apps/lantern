@@ -13,6 +13,8 @@ namespace WinFormsApp1
 
             webView21.KeyDown += WebView21_KeyDown;
             webView21.MouseMove += WebView21_MouseMove;
+
+            webView21.CoreWebView2.ProcessFailed += CoreWebView2_ProcessFailed;
             webView21.CoreWebView2.WebResourceRequested += (o, e) => Console.WriteLine($"Resource Requested {e.ResourceContext}");
             webView21.CoreWebView2.WebResourceResponseReceived += (o, e) => Console.WriteLine($"Resource Responsed {e.Request.Uri} {e.Response.StatusCode}");
 
@@ -25,6 +27,11 @@ namespace WinFormsApp1
 
             //webView21.CoreWebView2.SourceChanged += (o, e) => Console.WriteLine($"Source Changed {e.IsNewDocument}");
             //webView21.CoreWebView2.HistoryChanged += (o, e) => Console.WriteLine($"History Changed");
+        }
+
+        private void CoreWebView2_ProcessFailed(object? sender, Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs e)
+        {
+
         }
 
         private void WebView21_MouseMove(object? sender, MouseEventArgs e)
@@ -43,7 +50,7 @@ namespace WinFormsApp1
 
         protected override void WndProc(ref Message m)
         {
-            if(m.Msg == (int)WindowsMessage.WM_IME_KEYDOWN)
+            if (m.Msg == (int)WindowsMessage.WM_IME_KEYDOWN)
             {
 
             }

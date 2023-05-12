@@ -61,7 +61,7 @@
             TbUrl.Name = "TbUrl";
             TbUrl.Size = new Size(665, 27);
             TbUrl.TabIndex = 2;
-            TbUrl.Text = "http://bing.com";
+            TbUrl.Text = "https://www.facebook.com/login";
             // 
             // Form1
             // 
