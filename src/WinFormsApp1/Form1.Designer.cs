@@ -57,9 +57,9 @@
             // 
             // TbUrl
             // 
-            TbUrl.Location = new Point(12, 33);
+            TbUrl.Location = new Point(8, 32);
             TbUrl.Name = "TbUrl";
-            TbUrl.Size = new Size(665, 27);
+            TbUrl.Size = new Size(664, 27);
             TbUrl.TabIndex = 2;
             TbUrl.Text = "https://www.facebook.com/login";
             // 

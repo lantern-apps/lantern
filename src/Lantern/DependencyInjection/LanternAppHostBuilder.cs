@@ -40,7 +40,10 @@ public class LanternAppHostBuilder : ILanternHostBuilder
             Configuration.AddJsonFile(DefaultConfigurationFilePath);
         }
 
-        _lanternOptions = new(options);
+        _lanternOptions = new(options)
+        {
+            WebViewEnvironment = _envOptions
+        };
 
         _services = serviceCollection;
         _services.AddLogging();
@@ -373,7 +376,7 @@ public class LanternAppHostBuilder : ILanternHostBuilder
             nullName.Name = DefaultWindowName;
         }
 
-        foreach(var options in _lanternOptions.Windows)
+        foreach (var options in _lanternOptions.Windows)
         {
             ValidationHelper.Validate(options);
         }
@@ -404,6 +407,11 @@ public class LanternAppHostBuilder : ILanternHostBuilder
             envAction(_envOptions);
         }
 
+        if (_envOptions.BrowserExecutableFolder == null)
+        {
+            TrySetFixedVersionWebView();
+        }
+
         bool hasDefault = false;
         foreach (var host in _envOptions.VirtualHosts)
         {
@@ -425,6 +433,19 @@ public class LanternAppHostBuilder : ILanternHostBuilder
         if (!hasDefault && Directory.Exists(DefaultVirualHostFolderName))
         {
             _envOptions.AddVirtualHostMapping(DefaultVirualHostName, DefaultVirualHostFolderName);
+        }
+    }
+
+    private void TrySetFixedVersionWebView()
+    {
+        var startpath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "WebView2");
+        if (Directory.Exists(startpath))
+        {
+            var filepath = Path.Combine(startpath, "msedgewebview2.exe");
+            if (File.Exists(filepath))
+            {
+                _envOptions.BrowserExecutableFolder = startpath;
+            }
         }
     }
 
