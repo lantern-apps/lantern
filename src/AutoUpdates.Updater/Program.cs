@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -84,6 +85,8 @@ internal class Program
             i++;
         }
 
+        Thread.Sleep(1000);
+
         // Copy over the package contents
         WriteLog($"copy \"{_sourceDir}\" to \"{_targetDir}\"");
 
@@ -167,17 +170,37 @@ internal class Program
         }
     }
 
-    static void CopyDirectory(string sourceDirPath, string destDirPath)
+    static void CopyDirectory(string sourceDirPath, string destDirPath, bool root = true)
     {
+        string? manifest_source = null;
+        string? manifest_dest = null;
+        string? appsetings_source = null;
+        string? appsetings_dest = null;
         Directory.CreateDirectory(destDirPath);
 
         // Copy files
         foreach (var sourceFilePath in Directory.GetFiles(sourceDirPath))
         {
             var destFileName = Path.GetFileName(sourceFilePath);
-
             var destFilePath = Path.Combine(destDirPath, destFileName);
-            File.Copy(sourceFilePath, destFilePath, true);
+
+            if (root)
+            {
+                if (destFileName == ".manifest")
+                {
+                    manifest_source = sourceFilePath;
+                    manifest_dest = destFilePath;
+                    continue;
+                }
+                else if (destFileName == "appsettings.json")
+                {
+                    appsetings_source = sourceFilePath;
+                    appsetings_dest = destFilePath;
+                    continue;
+                }
+            }
+
+            CopyFile(sourceFilePath, destFilePath);
         }
 
         // Copy subdirectories recursively
@@ -185,7 +208,35 @@ internal class Program
         {
             var destSubDirName = Path.GetFileName(sourceSubDirPath);
             var destSubDirPath = Path.Combine(destDirPath, destSubDirName);
-            CopyDirectory(sourceSubDirPath, destSubDirPath);
+            CopyDirectory(sourceSubDirPath, destSubDirPath, false);
+        }
+
+        if (root)
+        {
+            if (manifest_source != null && manifest_dest != null)
+            {
+                CopyFile(manifest_source, manifest_dest);
+            }
+            if (appsetings_source != null && appsetings_dest != null)
+            {
+                CopyFile(appsetings_source, appsetings_dest);
+            }
+        }
+    }
+
+    static void CopyFile(string sourceDirPath, string destDirPath)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            try
+            {
+                File.Copy(sourceDirPath, destDirPath, true);
+                break;
+            }
+            catch
+            {
+                Thread.Sleep(i * 500);
+            }
         }
     }
 

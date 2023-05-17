@@ -13,7 +13,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="../AutoUpdates.Updater/bin/Release/net8.0/publish/win-x64/AutoUpdates.Updater.exe">
+		<EmbeddedResource Include="../AutoUpdates.Updater/bin/Release/net7.0/publish/win-x64/AutoUpdates.Updater.exe">
 			<Link>Updater.exe</Link>
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 			<Visible>false</Visible>
