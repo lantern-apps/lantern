@@ -226,7 +226,7 @@ internal class Program
 
     static void CopyFile(string sourceDirPath, string destDirPath)
     {
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i <= 3; i++)
         {
             try
             {
@@ -235,6 +235,11 @@ internal class Program
             }
             catch
             {
+                if (i == 3)
+                {
+                    throw;
+                }
+
                 Thread.Sleep(i * 500);
             }
         }
