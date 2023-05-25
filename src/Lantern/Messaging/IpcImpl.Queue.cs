@@ -245,7 +245,7 @@ internal partial class IpcImpl
 
             window.PostMessage(json);
 
-            _logger.LogTrace($"Ipc('{window.Name}') -> send response\r\n{json}");
+            _logger.LogTrace($"Ipc('{window.Name}') -> send response({request.Name})\r\n{json}");
         }
         catch (Exception ex)
         {
