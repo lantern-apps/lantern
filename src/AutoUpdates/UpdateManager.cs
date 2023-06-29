@@ -166,7 +166,7 @@ public class UpdateManager : IUpdateManager, IDisposable
             return UpdatePatch.Empty;
         }
 
-        if (version.Version == Manifest!.Version)
+        if (version.Version <= Manifest!.Version)
         {
             return UpdatePatch.Empty;
         }
