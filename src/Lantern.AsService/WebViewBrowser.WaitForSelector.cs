@@ -1,6 +1,4 @@
-﻿using System.Threading;
-
-namespace Lantern.AsService;
+﻿namespace Lantern.AsService;
 
 public partial class WebViewBrowser
 {
@@ -8,7 +6,7 @@ public partial class WebViewBrowser
     {
         options ??= WaitForSelectorOptions.Default;
 
-        if(options.Timeout > TimeSpan.Zero)
+        if (options.Timeout > TimeSpan.Zero)
         {
             await WaitForSelectorAsync(selector, options.Timeout, options.CancellationToken);
         }
@@ -43,7 +41,17 @@ public partial class WebViewBrowser
             if (timeoutToken.IsCancellationRequested)
                 throw new TimeoutException();
 
-            await Task.Delay(100, cts.Token);
+            try
+            {
+                await Task.Delay(100, timeoutToken);
+            }
+            catch
+            {
+                if (cancellationToken.IsCancellationRequested)
+                    throw new OperationCanceledException(cancellationToken);
+                else
+                    throw new TimeoutException();
+            }
 
             if (timeoutToken.IsCancellationRequested)
                 throw new TimeoutException();
