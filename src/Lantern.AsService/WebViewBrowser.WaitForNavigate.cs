@@ -17,6 +17,7 @@ public partial class WebViewBrowser
         return await _navigationStateMachine.SubscribeAsync(
             u => u.Equals(url),
             options.WaitUntil,
+            options.Timeout,
             options.CancellationToken);
     }
 
@@ -27,6 +28,7 @@ public partial class WebViewBrowser
 
         return await _navigationStateMachine.SubscribeAsync(
             options.WaitUntil,
+            options.Timeout,
             options.CancellationToken);
     }
 
@@ -34,7 +36,10 @@ public partial class WebViewBrowser
     {
         options ??= LoadOptions.Default;
 
-        return _navigationStateMachine.SubscribeAsync(options.WaitUntil, options.CancellationToken);
+        return _navigationStateMachine.SubscribeAsync(
+            options.WaitUntil, 
+            options.Timeout, 
+            options.CancellationToken);
     }
 
     public Task<LoadResponse?> WaitForUrlAsync(string urlOrPredicate, LoadOptions? options = null)
@@ -63,6 +68,7 @@ public partial class WebViewBrowser
         return _navigationStateMachine.SubscribeAsync(
             url => urlOrPredicate.IsMatch(url.AbsoluteUri),
             options.WaitUntil,
+            options.Timeout,
             options.CancellationToken);
     }
 
@@ -72,6 +78,7 @@ public partial class WebViewBrowser
         return _navigationStateMachine.SubscribeAsync(
             url => predicate(url.AbsoluteUri),
             options.WaitUntil,
+            options.Timeout,
             options.CancellationToken);
     }
 
@@ -81,6 +88,7 @@ public partial class WebViewBrowser
         return _navigationStateMachine.SubscribeAsync(
             url => predicate(url),
             options.WaitUntil,
+            options.Timeout,
             options.CancellationToken);
     }
 
@@ -161,27 +169,41 @@ public partial class WebViewBrowser
             });
         }
 
-        public Task<LoadResponse?> SubscribeAsync(WaitUntilState waitUntil, CancellationToken cancellationToken) => SubscribeAsync(null, waitUntil, cancellationToken);
+        public Task<LoadResponse?> SubscribeAsync(WaitUntilState waitUntil, TimeSpan timeout, CancellationToken cancellationToken) => SubscribeAsync(null, waitUntil, timeout, cancellationToken);
 
-        public Task<LoadResponse?> SubscribeAsync(Func<Uri, bool>? predicate, WaitUntilState waitUntil, CancellationToken cancellationToken)
+        public async Task<LoadResponse?> SubscribeAsync(Func<Uri, bool>? predicate, WaitUntilState waitUntil, TimeSpan timeout, CancellationToken cancellationToken)
         {
             if (_state.IsLoading && IsSatisfy(_state.State, waitUntil))
             {
                 Debug.Assert(_state.Url != null);
                 if (predicate == null || predicate(_state.Url))
-                    return Task.FromResult(CreateCurrentResponse());
+                    return CreateCurrentResponse();
             }
 
             if (!_state.IsLoading && _state.Url != null)
             {
                 if (predicate == null || predicate(_state.Url))
-                    return Task.FromResult(CreateCurrentResponse());
+                    return CreateCurrentResponse();
             }
 
             TaskCompletionSource<LoadResponse?> completion = new();
             var waitter = new WaitState(waitUntil, completion, predicate);
 
             _waiters = _waiters.Add(waitter);
+
+            CancellationTokenSource? cancellationTimoutSource = null;
+            if (timeout > TimeSpan.Zero)
+            {
+                cancellationTimoutSource = new CancellationTokenSource(timeout);
+                cancellationTimoutSource.Token.Register(() =>
+                {
+                    if (!waitter.IsCompleted)
+                    {
+                        waitter.Completion.SetCanceled(cancellationTimoutSource.Token);
+                        _waiters = _waiters.Remove(waitter);
+                    }
+                });
+            }
 
             cancellationToken.Register(() =>
             {
@@ -192,7 +214,21 @@ public partial class WebViewBrowser
                 }
             });
 
-            return completion.Task;
+            try
+            {
+                return await completion.Task;
+            }
+            catch (OperationCanceledException ex)
+            {
+                if (cancellationTimoutSource != null && ex.CancellationToken == cancellationTimoutSource.Token)
+                    throw new TimeoutException();
+
+                throw;
+            }
+            finally
+            {
+                cancellationTimoutSource?.Dispose();
+            }
         }
 
         private void OnNavigationStarting(object? sender, CoreWebView2NavigationStartingEventArgs e)
