@@ -31,6 +31,7 @@
             webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
             BtnNavigate = new Button();
             TbUrl = new TextBox();
+            Button_Try = new Button();
             ((System.ComponentModel.ISupportInitialize)webView21).BeginInit();
             SuspendLayout();
             // 
@@ -40,9 +41,9 @@
             webView21.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             webView21.CreationProperties = null;
             webView21.DefaultBackgroundColor = Color.White;
-            webView21.Location = new Point(12, 94);
+            webView21.Location = new Point(12, 116);
             webView21.Name = "webView21";
-            webView21.Size = new Size(776, 344);
+            webView21.Size = new Size(776, 322);
             webView21.TabIndex = 0;
             webView21.ZoomFactor = 1D;
             // 
@@ -64,12 +65,23 @@
             TbUrl.TabIndex = 2;
             TbUrl.Text = "https://www.facebook.com/login";
             // 
+            // Button_Try
+            // 
+            Button_Try.Location = new Point(694, 68);
+            Button_Try.Name = "Button_Try";
+            Button_Try.Size = new Size(94, 29);
+            Button_Try.TabIndex = 1;
+            Button_Try.Text = "功能";
+            Button_Try.UseVisualStyleBackColor = true;
+            Button_Try.Click += Button_Try_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
             Controls.Add(TbUrl);
+            Controls.Add(Button_Try);
             Controls.Add(BtnNavigate);
             Controls.Add(webView21);
             Name = "Form1";
@@ -84,5 +96,6 @@
         private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
         private Button BtnNavigate;
         private TextBox TbUrl;
+        private Button Button_Try;
     }
 }

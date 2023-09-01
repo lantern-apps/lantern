@@ -61,6 +61,11 @@ namespace WinFormsApp1
             }
             base.WndProc(ref m);
         }
+
+        private async void Button_Try_Click(object sender, EventArgs e)
+        {
+            await webView21.CoreWebView2.Profile.ClearBrowsingDataAsync(Microsoft.Web.WebView2.Core.CoreWebView2BrowsingDataKinds.Cookies, new DateTime(2022, 1, 1), DateTime.Now);
+        }
     }
 }
 
