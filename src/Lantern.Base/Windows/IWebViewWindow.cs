@@ -6,4 +6,5 @@ public interface IWebViewWindow : IWindow
     Task EnsureWebViewInitializedAsync();
     Task<string?> GetUrlAsync();
     Task SetUrlAsync(string url);
+    Task ClearCookieAsync();
 }

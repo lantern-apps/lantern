@@ -93,7 +93,14 @@ public class WebViewWindow : Window, IWebViewWindow
         {
             await Dispatcher.UIThread.InvokeAsync(() => _webview.Navigate(url));
         }
+    }
 
+    public Task ClearCookieAsync()
+    {
+        if (_webview == null)
+            return Task.CompletedTask;
+
+        return _webview.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.Cookies);
     }
 
     public Task EnsureWebViewInitializedAsync() => _cts.Task;
