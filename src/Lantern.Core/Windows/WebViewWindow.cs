@@ -1,6 +1,7 @@
 ﻿using Lantern.Platform;
 using Lantern.Threading;
 using Microsoft.Web.WebView2.Core;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 
@@ -99,8 +100,14 @@ public class WebViewWindow : Window, IWebViewWindow
     {
         if (_webview == null)
             return Task.CompletedTask;
-
-        return _webview.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.Cookies);
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            return _webview.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.Cookies);
+        }
+        else
+        {
+            return Dispatcher.UIThread.InvokeAsync(() => _webview.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.Cookies));
+        }
     }
 
     public Task EnsureWebViewInitializedAsync() => _cts.Task;
