@@ -1,5 +1,6 @@
 ﻿using Lantern.AsService;
 using Microsoft.Web.WebView2.Core;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace Lantern.AsService;
@@ -24,7 +25,15 @@ public partial class WebViewBrowser
         {
             if (urlOrPredicate.IsMatch(e.Request.Uri))
             {
-                var content = options.LoadContent ? await e.Response.GetContentAsync() : null;
+                Stream? content = null;
+                try
+                {
+                    content = options.LoadContent ? await e.Response.GetContentAsync() : null;
+                }
+                catch(Exception ex)
+                {
+                    Debug.Fail(ex.Message);
+                }
                 _webview.WebResourceResponseReceived -= handler;
                 tcs.SetResult(new WebViewHttpResponse(e, content));
             }
@@ -49,7 +58,15 @@ public partial class WebViewBrowser
 
         async void handler(object? sender, CoreWebView2WebResourceResponseReceivedEventArgs e)
         {
-            var content = options.LoadContent ? await e.Response.GetContentAsync() : null;
+            Stream? content = null;
+            try
+            {
+                content = options.LoadContent ? await e.Response.GetContentAsync() : null;
+            }
+            catch (Exception ex)
+            {
+                Debug.Fail(ex.Message);
+            }
             var response = new WebViewHttpResponse(e, content);
             if (predicate(response))
             {
