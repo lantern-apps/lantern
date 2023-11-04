@@ -9,14 +9,16 @@ public class WebViewHttpResponse
     private readonly int _statusCode;
     private readonly Dictionary<string, string> _headers = new();
     private readonly WebViewHttpRequest _request;
+    private readonly Stream? _body;
 
-    public WebViewHttpResponse(CoreWebView2WebResourceResponseReceivedEventArgs response)
+    public WebViewHttpResponse(CoreWebView2WebResourceResponseReceivedEventArgs response,Stream? body)
     {
         _response = response;
         _reasonPhrase = _response.Response.ReasonPhrase;
         _statusCode = _response.Response.StatusCode;
+        _body = body;
 
-        foreach(var header in _response.Response.Headers)
+        foreach (var header in _response.Response.Headers)
         {
             if (_headers.ContainsKey(header.Key))
             {
@@ -36,8 +38,5 @@ public class WebViewHttpResponse
     public IDictionary<string, string> Headers => _headers;
     public WebViewHttpRequest Request => _request;
 
-    public Task<Stream> BodyAsync()
-    {
-        return _response.Response.GetContentAsync();
-    }
+    public Stream? Body => _body;
 }
