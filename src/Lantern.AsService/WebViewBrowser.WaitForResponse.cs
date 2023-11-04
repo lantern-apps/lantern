@@ -6,33 +6,34 @@ namespace Lantern.AsService;
 
 public partial class WebViewBrowser
 {
-    public Task WaitForResponseAsync(string urlOrPredicate, WaitForResponseOptions? options = null)
+    public Task<WebViewHttpResponse> WaitForResponseAsync(string urlOrPredicate, WaitForResponseOptions? options = null)
     {
         var regex = urlOrPredicate.GlobToRegex();
         if (regex == null)
-            return Task.CompletedTask;
+            throw new ArgumentException("Argument invalid", nameof(urlOrPredicate));
 
         return WaitForResponseAsync(regex, options);
     }
 
-    public async Task WaitForResponseAsync(Regex urlOrPredicate, WaitForResponseOptions? options = null)
+    public async Task<WebViewHttpResponse> WaitForResponseAsync(Regex urlOrPredicate, WaitForResponseOptions? options = null)
     {
         options ??= WaitForResponseOptions.Default;
 
-        TaskCompletionSource tcs = new();
-        void handler(object? sender, CoreWebView2WebResourceResponseReceivedEventArgs e)
+        TaskCompletionSource<WebViewHttpResponse> tcs = new();
+        async void handler(object? sender, CoreWebView2WebResourceResponseReceivedEventArgs e)
         {
             if (urlOrPredicate.IsMatch(e.Request.Uri))
             {
+                var content = options.LoadContent ? await e.Response.GetContentAsync() : null;
                 _webview.WebResourceResponseReceived -= handler;
-                tcs.SetResult();
+                tcs.SetResult(new WebViewHttpResponse(e, content));
             }
         };
 
         await InvokeAsync(() => _webview.WebResourceResponseReceived += handler);
         try
         {
-            await tcs.Task.WithCancellation(options.Timeout, options.CancellationToken);
+            return await tcs.Task.WithCancellation(options.Timeout, options.CancellationToken);
         }
         finally
         {
@@ -40,25 +41,27 @@ public partial class WebViewBrowser
         }
     }
 
-    public async Task WaitForResponseAsync(Func<WebViewHttpResponse, bool> predicate, WaitForResponseOptions? options = null)
+    public async Task<WebViewHttpResponse> WaitForResponseAsync(Func<WebViewHttpResponse, bool> predicate, WaitForResponseOptions? options = null)
     {
         options ??= WaitForResponseOptions.Default;
 
-        TaskCompletionSource tcs = new();
+        TaskCompletionSource<WebViewHttpResponse> tcs = new();
 
-        void handler(object? sender, CoreWebView2WebResourceResponseReceivedEventArgs e)
+        async void handler(object? sender, CoreWebView2WebResourceResponseReceivedEventArgs e)
         {
-            if (predicate(new WebViewHttpResponse(e)))
+            var content = options.LoadContent ? await e.Response.GetContentAsync() : null;
+            var response = new WebViewHttpResponse(e, content);
+            if (predicate(response))
             {
                 _webview.WebResourceResponseReceived -= handler;
-                tcs.SetResult();
+                tcs.SetResult(response);
             }
         };
 
         await InvokeAsync(() => _webview.WebResourceResponseReceived += handler);
         try
         {
-            await tcs.Task.WithCancellation(options.Timeout, options.CancellationToken);
+            return await tcs.Task.WithCancellation(options.Timeout, options.CancellationToken);
         }
         finally
         {
@@ -67,7 +70,7 @@ public partial class WebViewBrowser
     }
 
 
-    public Task RunAndWaitForResponseAsync(Action action, string urlOrPredicate, WaitForResponseOptions? options = null)
+    public Task<WebViewHttpResponse> RunAndWaitForResponseAsync(Action action, string urlOrPredicate, WaitForResponseOptions? options = null)
     {
         options ??= WaitForResponseOptions.Default;
         var waiter = WaitForResponseAsync(urlOrPredicate, options);
@@ -75,7 +78,7 @@ public partial class WebViewBrowser
         return waiter.WithCancellation(options.Timeout, options.CancellationToken);
     }
 
-    public Task RunAndWaitForResponseAsync(Action action, Regex urlOrPredicate, WaitForResponseOptions? options = null)
+    public Task<WebViewHttpResponse> RunAndWaitForResponseAsync(Action action, Regex urlOrPredicate, WaitForResponseOptions? options = null)
     {
         options ??= WaitForResponseOptions.Default;
         var waiter = WaitForResponseAsync(urlOrPredicate, options);
@@ -83,7 +86,7 @@ public partial class WebViewBrowser
         return waiter.WithCancellation(options.Timeout, options.CancellationToken);
     }
 
-    public Task RunAndWaitForResponseAsync(Action action, Func<WebViewHttpResponse, bool> predicate, WaitForResponseOptions? options = null)
+    public Task<WebViewHttpResponse> RunAndWaitForResponseAsync(Action action, Func<WebViewHttpResponse, bool> predicate, WaitForResponseOptions? options = null)
     {
         options ??= WaitForResponseOptions.Default;
         var waiter = WaitForResponseAsync(predicate, options);
@@ -92,28 +95,32 @@ public partial class WebViewBrowser
     }
 
 
-    public Task RunAndWaitForResponseAsync(Func<Task> action, string urlOrPredicate, WaitForResponseOptions? options = null)
+    public async Task<WebViewHttpResponse> RunAndWaitForResponseAsync(Func<Task> action, string urlOrPredicate, WaitForResponseOptions? options = null)
     {
         options ??= WaitForResponseOptions.Default;
         var waiter = WaitForResponseAsync(urlOrPredicate, options);
         var task = action();
-        return Task.WhenAll(waiter, task).WithCancellation(options.Timeout, options.CancellationToken);
+        await Task.WhenAll(waiter, task).WithCancellation(options.Timeout, options.CancellationToken);
+
+        return waiter.Result;
     }
 
-    public Task RunAndWaitForResponseAsync(Func<Task> action, Regex urlOrPredicate, WaitForResponseOptions? options = null)
+    public async Task<WebViewHttpResponse> RunAndWaitForResponseAsync(Func<Task> action, Regex urlOrPredicate, WaitForResponseOptions? options = null)
     {
         options ??= WaitForResponseOptions.Default;
         var waiter = WaitForResponseAsync(urlOrPredicate, options);
         var task = action();
-        return Task.WhenAll(waiter, task).WithCancellation(options.Timeout, options.CancellationToken);
+        await Task.WhenAll(waiter, task).WithCancellation(options.Timeout, options.CancellationToken);
+        return waiter.Result;
     }
 
-    public Task RunAndWaitForResponseAsync(Func<Task> action, Func<WebViewHttpResponse, bool> predicate, WaitForResponseOptions? options = null)
+    public async Task<WebViewHttpResponse> RunAndWaitForResponseAsync(Func<Task> action, Func<WebViewHttpResponse, bool> predicate, WaitForResponseOptions? options = null)
     {
         options ??= WaitForResponseOptions.Default;
         var waiter = WaitForResponseAsync(predicate, options);
         var task = action();
-        return Task.WhenAll(waiter, task).WithCancellation(options.Timeout, options.CancellationToken);
+        await Task.WhenAll(waiter, task).WithCancellation(options.Timeout, options.CancellationToken);
+        return waiter.Result;
     }
 }
 
@@ -122,4 +129,5 @@ public class WaitForResponseOptions
     internal static readonly WaitForResponseOptions Default = new();
     public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
     public CancellationToken CancellationToken { get; set; }
+    public bool LoadContent { get; set; }
 }
