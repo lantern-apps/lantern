@@ -8,9 +8,6 @@ public class AusApplication
     [JsonPropertyName("name")]
     public required string Name { get; set; }
 
-    [JsonPropertyName("description")]
-    public string? Description { get; set; }
-
     [JsonPropertyName("versions")]
     public required AusAppVersion[] Versions { get; set; }
 

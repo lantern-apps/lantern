@@ -62,7 +62,7 @@ internal static class HttpClientExtensions
         CancellationToken cancellationToken = default)
     {
         var length = content.Headers.ContentLength;
-        using var source = await content.ReadAsStreamAsync();
+        using var source = await content.ReadAsStreamAsync(cancellationToken);
         using var buffer = PooledBuffer.ForStream();
 
         var totalBytesCopied = 0L;

@@ -76,7 +76,7 @@ internal class WindowService : WindowManager, ILanternService
             _ipcService.Emit(window, eventName!);
         };
 
-        window.WebViewMessageReceived += message => _ipcService.Post(window, message);
+        window.WebViewMessageReceived += (source, message) => _ipcService.Post(window, message);
 
         return window;
     }

@@ -57,7 +57,7 @@ public class WebViewWindow : Window, IWebViewWindow
     }
 
     public event Action? WebViewInitialized;
-    public event Action<string>? WebViewMessageReceived;
+    public event Action<string, string>? WebViewMessageReceived;
 
     protected internal CoreWebView2? CoreWebView => _webview;
 
@@ -332,7 +332,7 @@ public class WebViewWindow : Window, IWebViewWindow
 
     private void OnWebViewMessageReceived(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
     {
-        WebViewMessageReceived?.Invoke(e.WebMessageAsJson);
+        WebViewMessageReceived?.Invoke(e.Source, e.WebMessageAsJson);
     }
 
     private void OnWebViewPermissionRequested(object? sender, CoreWebView2PermissionRequestedEventArgs e)

@@ -1,40 +1,10 @@
-﻿using Lantern.Platform;
-using Lantern.Windows;
+﻿using Lantern.Windows;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebView;
 using Microsoft.Extensions.FileProviders;
 
 namespace Lantern.Blazor;
-
-
-public class BlazorWebViewWindow : WebViewWindow
-{
-    private readonly IServiceProvider _serviceProvider;
-    private LanternWebViewManager? _webViewManager;
-
-    public BlazorWebViewWindow(WebViewEnvironmentOptions environmentOptions,
-                               WebViewWindowOptions windowOptions,
-                               IWindowManager? windowManager,
-                               IWindowImpl windowImpl,
-                               IServiceProvider serviceProvider) : base(environmentOptions, windowOptions, windowManager, windowImpl)
-    {
-        _serviceProvider = serviceProvider;
-    }
-
-    protected override void OnWebViewInitialized()
-    {
-        _webViewManager = new LanternWebViewManager(
-            this,
-            _serviceProvider,
-            new LanternDispatcher(),
-            null,
-            null,
-            "wwwroot/index.html");
-        //_webViewManager.Navigate(_windowOptions.Url);
-        base.OnWebViewInitialized();
-    }
-}
 
 public class LanternWebViewManager : WebViewManager
 {
@@ -55,14 +25,12 @@ public class LanternWebViewManager : WebViewManager
 
     protected override void SendMessage(string message)
     {
-
         _window.PostMessage(message);
     }
 
-    private async void OnWebViewMessageReceived(string message)
+    private void OnWebViewMessageReceived(string source, string message)
     {
-        this.MessageReceived();
-        throw new NotImplementedException();
+        MessageReceived(new Uri(source), message);
     }
 
     protected override async void NavigateCore(Uri absoluteUri)

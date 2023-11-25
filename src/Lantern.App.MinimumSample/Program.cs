@@ -1,1 +1,3 @@
-﻿LanternAppHostBuilder.Create().Build().Run();
+﻿using Lantern;
+
+LanternAppHostBuilder.Create().Build().Run();

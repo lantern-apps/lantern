@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -169,6 +168,8 @@ internal class Program
             return false;
         }
     }
+
+    //对 CopyDirectory 函数进行有优化
 
     static void CopyDirectory(string sourceDirPath, string destDirPath, bool root = true)
     {
