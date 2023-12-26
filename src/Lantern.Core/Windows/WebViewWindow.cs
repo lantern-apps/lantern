@@ -233,7 +233,11 @@ public class WebViewWindow : Window, IWebViewWindow
                 ExclusiveUserDataFolderAccess = false,
             });
 
-        _controller = await _environment.CreateCoreWebView2ControllerAsync(WindowImpl.NativeHandle);
+        var controllerOptions = _environment.CreateCoreWebView2ControllerOptions();
+        controllerOptions.ProfileName = _windowOptions.ProfileName;
+        controllerOptions.IsInPrivateModeEnabled = _windowOptions.IsInPrivateModeEnabled;
+
+        _controller = await _environment.CreateCoreWebView2ControllerAsync(WindowImpl.NativeHandle, controllerOptions);
         ResizeWebViewBounds();
         _controller.IsVisible = true;
 
