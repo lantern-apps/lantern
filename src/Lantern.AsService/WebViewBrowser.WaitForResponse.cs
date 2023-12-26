@@ -1,5 +1,4 @@
-﻿using Lantern.AsService;
-using Microsoft.Web.WebView2.Core;
+﻿using Microsoft.Web.WebView2.Core;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
@@ -21,23 +20,6 @@ public partial class WebViewBrowser
         options ??= WaitForResponseOptions.Default;
 
         TaskCompletionSource<WebViewHttpResponse> tcs = new();
-        async void handler(object? sender, CoreWebView2WebResourceResponseReceivedEventArgs e)
-        {
-            if (urlOrPredicate.IsMatch(e.Request.Uri))
-            {
-                Stream? content = null;
-                try
-                {
-                    content = options.LoadContent ? await e.Response.GetContentAsync() : null;
-                }
-                catch(Exception ex)
-                {
-                    Debug.Fail(ex.Message);
-                }
-                _webview.WebResourceResponseReceived -= handler;
-                tcs.SetResult(new WebViewHttpResponse(e, content));
-            }
-        };
 
         await InvokeAsync(() => _webview.WebResourceResponseReceived += handler);
         try
@@ -48,6 +30,188 @@ public partial class WebViewBrowser
         {
             await InvokeAsync(() => _webview.WebResourceResponseReceived -= handler);
         }
+
+        async void handler(object? sender, CoreWebView2WebResourceResponseReceivedEventArgs e)
+        {
+            if (options.CancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            if (urlOrPredicate.IsMatch(e.Request.Uri))
+            {
+                Stream? content = null;
+                try
+                {
+                    content = options.LoadContent ? await e.Response.GetContentAsync() : null;
+                }
+                catch (Exception ex)
+                {
+                    Debug.Fail(ex.Message);
+                }
+
+                _webview.WebResourceResponseReceived -= handler;
+                tcs.SetResult(new WebViewHttpResponse(e, content));
+            }
+        };
+
+    }
+
+    public void SubscribeResponse(string urlOrPredicate, Func<WebViewHttpResponse, Task<bool>> next, WaitForResponseOptions? options = null)
+    {
+        options ??= WaitForResponseOptions.Default;
+        var regex = urlOrPredicate.GlobToRegex() ?? throw new ArgumentException("Argument invalid", nameof(urlOrPredicate));
+
+        InvokeAsync(() => _webview.WebResourceResponseReceived += handler);
+
+        async void handler(object? sender, CoreWebView2WebResourceResponseReceivedEventArgs e)
+        {
+            if (options.CancellationToken.IsCancellationRequested)
+            {
+                _webview.WebResourceResponseReceived -= handler;
+            }
+            else
+            {
+                Stream? content = null;
+                try
+                {
+                    content = options.LoadContent ? await e.Response.GetContentAsync() : null;
+                }
+                catch (Exception ex)
+                {
+                    Debug.Fail(ex.Message);
+                }
+                var response = new WebViewHttpResponse(e, content);
+
+                if (regex.IsMatch(e.Request.Uri))
+                {
+                    if (!await next(response))
+                    {
+                        _webview.WebResourceResponseReceived -= handler;
+                    }
+                }
+            }
+        };
+    }
+
+    public async Task SubscribeResponseAsync(string urlOrPredicate, Func<WebViewHttpResponse, Task<bool>> next, WaitForResponseOptions? options = null)
+    {
+        options ??= WaitForResponseOptions.Default;
+        var regex = urlOrPredicate.GlobToRegex() ?? throw new ArgumentException("Argument invalid", nameof(urlOrPredicate));
+
+        TaskCompletionSource tcs = new();
+        await InvokeAsync(() => _webview.WebResourceResponseReceived += handler);
+
+        try
+        {
+            await tcs.Task.WithCancellation(options.Timeout, options.CancellationToken);
+        }
+        finally
+        {
+            await InvokeAsync(() => _webview.WebResourceResponseReceived -= handler);
+        }
+
+        async void handler(object? sender, CoreWebView2WebResourceResponseReceivedEventArgs e)
+        {
+            if (options.CancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            Stream? content = null;
+            try
+            {
+                content = options.LoadContent ? await e.Response.GetContentAsync() : null;
+            }
+            catch (Exception ex)
+            {
+                Debug.Fail(ex.Message);
+            }
+            var response = new WebViewHttpResponse(e, content);
+
+            if (regex.IsMatch(e.Request.Uri))
+            {
+                if (!await next(response))
+                {
+                    _webview.WebResourceResponseReceived -= handler;
+                    tcs.SetResult();
+                }
+            }
+        };
+    }
+
+    public void SubscribeResponse(Func<WebViewHttpResponse, Task<bool>> next, WaitForResponseOptions? options = null)
+    {
+        options ??= WaitForResponseOptions.Default;
+
+        InvokeAsync(() => _webview.WebResourceResponseReceived += handler);
+
+        async void handler(object? sender, CoreWebView2WebResourceResponseReceivedEventArgs e)
+        {
+            if (options.CancellationToken.IsCancellationRequested)
+            {
+                _webview.WebResourceResponseReceived -= handler;
+                return;
+            }
+
+            Stream? content = null;
+            try
+            {
+                content = options.LoadContent ? await e.Response.GetContentAsync() : null;
+            }
+            catch (Exception ex)
+            {
+                Debug.Fail(ex.Message);
+            }
+            var response = new WebViewHttpResponse(e, content);
+
+            if (!await next(response))
+            {
+                _webview.WebResourceResponseReceived -= handler;
+            }
+        };
+    }
+
+    public async Task SubscribeResponseAsync(Func<WebViewHttpResponse, Task<bool>> next, WaitForResponseOptions? options = null)
+    {
+        options ??= WaitForResponseOptions.Default;
+        TaskCompletionSource tcs = new();
+
+        await InvokeAsync(() => _webview.WebResourceResponseReceived += handler);
+
+        try
+        {
+            await tcs.Task.WithCancellation(options.Timeout, options.CancellationToken);
+        }
+        finally
+        {
+            await InvokeAsync(() => _webview.WebResourceResponseReceived -= handler);
+        }
+
+        async void handler(object? sender, CoreWebView2WebResourceResponseReceivedEventArgs e)
+        {
+            if (options.CancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            Stream? content = null;
+            try
+            {
+                content = options.LoadContent ? await e.Response.GetContentAsync() : null;
+            }
+            catch (Exception ex)
+            {
+                Debug.Fail(ex.Message);
+            }
+            var response = new WebViewHttpResponse(e, content);
+
+            if (!await next(response))
+            {
+                _webview.WebResourceResponseReceived -= handler;
+                tcs.SetResult();
+            }
+        };
     }
 
     public async Task<WebViewHttpResponse> WaitForResponseAsync(Func<WebViewHttpResponse, bool> predicate, WaitForResponseOptions? options = null)
@@ -56,8 +220,24 @@ public partial class WebViewBrowser
 
         TaskCompletionSource<WebViewHttpResponse> tcs = new();
 
+        await InvokeAsync(() => _webview.WebResourceResponseReceived += handler);
+
+        try
+        {
+            return await tcs.Task.WithCancellation(options.Timeout, options.CancellationToken);
+        }
+        finally
+        {
+            await InvokeAsync(() => _webview.WebResourceResponseReceived -= handler);
+        }
+
         async void handler(object? sender, CoreWebView2WebResourceResponseReceivedEventArgs e)
         {
+            if (options.CancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
             Stream? content = null;
             try
             {
@@ -74,16 +254,6 @@ public partial class WebViewBrowser
                 tcs.SetResult(response);
             }
         };
-
-        await InvokeAsync(() => _webview.WebResourceResponseReceived += handler);
-        try
-        {
-            return await tcs.Task.WithCancellation(options.Timeout, options.CancellationToken);
-        }
-        finally
-        {
-            await InvokeAsync(() => _webview.WebResourceResponseReceived -= handler);
-        }
     }
 
 
