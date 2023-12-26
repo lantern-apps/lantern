@@ -43,7 +43,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoUpdates", "AutoUpdates\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cli", "cli", "{CCED34C1-9719-4A9C-B816-683A08B17310}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lantern.Blazor", "Lantern.Blazor\Lantern.Blazor.csproj", "{E25C9CF4-5E8D-45FC-8D0E-2995D66BE732}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lantern.Blazor", "Lantern.Blazor\Lantern.Blazor.csproj", "{E25C9CF4-5E8D-45FC-8D0E-2995D66BE732}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutomationServiceHost", "AutomationServiceHost\AutomationServiceHost.csproj", "{41CBF710-257B-41F5-8C15-3051746E3A75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -115,6 +117,10 @@ Global
 		{E25C9CF4-5E8D-45FC-8D0E-2995D66BE732}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E25C9CF4-5E8D-45FC-8D0E-2995D66BE732}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E25C9CF4-5E8D-45FC-8D0E-2995D66BE732}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41CBF710-257B-41F5-8C15-3051746E3A75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41CBF710-257B-41F5-8C15-3051746E3A75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41CBF710-257B-41F5-8C15-3051746E3A75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41CBF710-257B-41F5-8C15-3051746E3A75}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -136,6 +142,7 @@ Global
 		{E7CDC968-1E2B-4E1C-920B-A65F51A9128E} = {79651F74-5C3E-431D-B868-553C0613893E}
 		{C5D1767F-B830-4989-A7AA-E822762EBEC4} = {79651F74-5C3E-431D-B868-553C0613893E}
 		{E25C9CF4-5E8D-45FC-8D0E-2995D66BE732} = {9804F86B-C6BF-4D3D-B32B-68D95E8D6254}
+		{41CBF710-257B-41F5-8C15-3051746E3A75} = {07E6FD3A-2784-4E50-9683-CD1041BE4C66}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C340BA8F-6721-4A7C-946E-0BB8C058CCD9}
