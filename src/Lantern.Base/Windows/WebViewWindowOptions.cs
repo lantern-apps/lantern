@@ -66,7 +66,11 @@ public class WebViewWindowOptions
     [JsonPropertyName("visible")]
     public bool Visible { get; set; } = true;
 
+    public string? ProfileName { get; set; }
+    public bool IsInPrivateModeEnabled { get; set; }
+
     public string? UserAgent { get; set; }
+    
 
     public bool AreDefaultContextMenusEnabled { get; set; } = false;
     public bool AreBrowserAcceleratorKeysEnabled { get; set; } = false;
