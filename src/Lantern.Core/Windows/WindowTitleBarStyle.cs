@@ -1,4 +1,4 @@
-﻿using Lantern.Messaging.Serialization;
+﻿using Lantern.Serialization;
 using System.Text.Json.Serialization;
 
 namespace Lantern.Windows;

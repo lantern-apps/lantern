@@ -25,6 +25,9 @@
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 	</ItemGroup>
 	<ItemGroup>
+	  <PackageReference Include="Calls" Version="1.0.0-beta.2" />
+	</ItemGroup>
+	<ItemGroup>
 		<ProjectReference Include="..\AutoUpdates\AutoUpdates.csproj" />
 		<ProjectReference Include="..\Lantern.Core\Lantern.Core.csproj" />
 		<ProjectReference Include="..\Lantern.Win32\Lantern.Win32.csproj" />

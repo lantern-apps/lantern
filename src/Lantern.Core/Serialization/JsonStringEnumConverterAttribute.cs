@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Lantern.Messaging.Serialization;
+namespace Lantern.Serialization;
 
 internal class JsonStringEnumConverterAttribute : JsonConverterAttribute
 {

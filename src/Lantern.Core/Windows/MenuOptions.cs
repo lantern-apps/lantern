@@ -1,4 +1,4 @@
-﻿using Lantern.Messaging.Serialization;
+﻿using Lantern.Serialization;
 using System.Text.Json.Serialization;
 
 namespace Lantern.Windows;
@@ -6,7 +6,7 @@ namespace Lantern.Windows;
 public class MenuOptions
 {
     [JsonPropertyName("items")]
-    public List<MenuItemOptions> Items { get; set; } = new();
+    public List<MenuItemOptions> Items { get; set; } = [];
 
     public Menu? Build()
     {
