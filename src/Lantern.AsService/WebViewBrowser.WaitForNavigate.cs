@@ -8,6 +8,39 @@ namespace Lantern.AsService;
 
 public partial class WebViewBrowser
 {
+    /// <summary>
+    /// 确保当前页面处于指定Url
+    /// </summary>
+    /// <param name="url"></param>
+    /// <param name="options"></param>
+    /// <returns>如果浏览器页面已是指定Url，则返回true，反之返回false</returns>
+    public async Task<bool> EnsureUrlAsync(string url, LoadOptions? options = null)
+    {
+        var current = await UrlAsync();
+        current = UrlUtility.GetUrlWithoutQueryString(current);
+        url = UrlUtility.GetUrlWithoutQueryString(url);
+        if (string.Equals(current, url, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        await GotoAsync(url, options);
+        return false;
+    }
+
+    public async Task NavigateToAsync(string url)
+    {
+        var current = await UrlAsync();
+        current = UrlUtility.GetUrlWithoutQueryString(current);
+        url = UrlUtility.GetUrlWithoutQueryString(url);
+        if (string.Equals(current, url, StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        await InvokeAsync(() => _webview.Navigate(url));
+    }
+
     public async Task<LoadResponse?> GotoAsync(string url, LoadOptions? options = null)
     {
         options ??= LoadOptions.Default;
@@ -37,8 +70,8 @@ public partial class WebViewBrowser
         options ??= LoadOptions.Default;
 
         return _navigationStateMachine.SubscribeAsync(
-            options.WaitUntil, 
-            options.Timeout, 
+            options.WaitUntil,
+            options.Timeout,
             options.CancellationToken);
     }
 
@@ -334,7 +367,6 @@ public partial class WebViewBrowser
             _ => false,
         };
     }
-
 }
 
 public class LoadOptions

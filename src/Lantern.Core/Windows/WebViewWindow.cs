@@ -1,7 +1,6 @@
 ﻿using Lantern.Platform;
 using Lantern.Threading;
 using Microsoft.Web.WebView2.Core;
-using System;
 using System.Diagnostics;
 using System.Drawing;
 
@@ -11,7 +10,9 @@ namespace Lantern.Windows;
 public class WebViewWindow : Window, IWebViewWindow
 {
     [ThreadStatic]
-    private static CoreWebView2Environment? _environment;
+    private static CoreWebView2Environment? _global_environment;
+
+    private CoreWebView2Environment? _environment;
 
     private readonly WebViewEnvironmentOptions _environmentOptions;
     private readonly WebViewWindowOptions _windowOptions;
@@ -21,7 +22,7 @@ public class WebViewWindow : Window, IWebViewWindow
 
     private readonly string _name;
 
-    private CoreWebView2Controller? _controller;
+    protected CoreWebView2Controller? _controller;
     private CoreWebView2? _webview;
 
     public WebViewWindow(
@@ -217,27 +218,50 @@ public class WebViewWindow : Window, IWebViewWindow
 
     private async void CreateWebView2Controller()
     {
-        _environment ??= await CoreWebView2Environment.CreateAsync(
-            _environmentOptions.BrowserExecutableFolder,
-            _environmentOptions.UserDataFolder,
-            new CoreWebView2EnvironmentOptions
-            {
-#if DEBUG
-                AdditionalBrowserArguments = "--disable-web-security --enable-features=\"msWebView2EnableDraggableRegions\" --remote-debugging-port=9222",
-#else
-                AdditionalBrowserArguments = "--disable-web-security --enable-features=\"msWebView2EnableDraggableRegions\"",
-#endif
-                Language = _environmentOptions.Language,
-                AllowSingleSignOnUsingOSPrimaryAccount = false,
-                IsCustomCrashReportingEnabled = false,
-                ExclusiveUserDataFolderAccess = false,
-            });
+        if (_environmentOptions.IsIsolated)
+        {
+            _environment = await CoreWebView2Environment.CreateAsync(
+                _environmentOptions.BrowserExecutableFolder,
+                _environmentOptions.UserDataFolder,
+                new CoreWebView2EnvironmentOptions
+                {
+                    //#if DEBUG
+                    //                AdditionalBrowserArguments = "--disable-web-security --enable-features=\"msWebView2EnableDraggableRegions\" --remote-debugging-port=9222",
+                    //#else
+                    //                AdditionalBrowserArguments = "--disable-web-security --enable-features=\"msWebView2EnableDraggableRegions\"",
+                    //#endif
+
+                    //AdditionalBrowserArguments = "--disable-web-security --proxy-server=\"127.0.0.1:9728\"",
+                    AdditionalBrowserArguments = _environmentOptions.AdditionalBrowserArguments,
+                    Language = _windowOptions.Language ?? _environmentOptions.Language,
+                    AllowSingleSignOnUsingOSPrimaryAccount = false,
+                    IsCustomCrashReportingEnabled = false,
+                    ExclusiveUserDataFolderAccess = false,
+                });
+        }
+        else
+        {
+            _global_environment ??= await CoreWebView2Environment.CreateAsync(
+                _environmentOptions.BrowserExecutableFolder,
+                _environmentOptions.UserDataFolder,
+                new CoreWebView2EnvironmentOptions
+                {
+                    Language = _environmentOptions.Language,
+                    AdditionalBrowserArguments = _environmentOptions.AdditionalBrowserArguments,
+                    AllowSingleSignOnUsingOSPrimaryAccount = false,
+                    IsCustomCrashReportingEnabled = false,
+                    ExclusiveUserDataFolderAccess = false,
+                });
+            _environment = _global_environment;
+        }
 
         var controllerOptions = _environment.CreateCoreWebView2ControllerOptions();
         controllerOptions.ProfileName = _windowOptions.ProfileName;
         controllerOptions.IsInPrivateModeEnabled = _windowOptions.IsInPrivateModeEnabled;
+        controllerOptions.ScriptLocale = _windowOptions.Language;
 
-        _controller = await _environment.CreateCoreWebView2ControllerAsync(WindowImpl.NativeHandle, controllerOptions);
+         _controller = await _environment.CreateCoreWebView2ControllerAsync(WindowImpl.NativeHandle, controllerOptions);
+
         ResizeWebViewBounds();
         _controller.IsVisible = true;
 
@@ -269,7 +293,6 @@ public class WebViewWindow : Window, IWebViewWindow
         _webview.Settings.AreHostObjectsAllowed = _windowOptions.AreHostObjectsAllowed;
         _webview.Settings.IsBuiltInErrorPageEnabled = _windowOptions.IsBuiltInErrorPageEnabled;
         _webview.Settings.AreHostObjectsAllowed = false;
-
 
         if (_environmentOptions.VirtualHosts != null && _environmentOptions.VirtualHosts.Count > 0)
         {
@@ -352,4 +375,5 @@ public class WebViewWindow : Window, IWebViewWindow
             e.State = CoreWebView2PermissionState.Deny;
         }
     }
+
 }

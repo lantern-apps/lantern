@@ -17,7 +17,7 @@ public partial class AusManifest
         matcher.AddExcludePatterns(exclusives);
         var filePaths = matcher.GetResultsInFullPath(directory);
 
-        List<AusFile> files = new();
+        List<AusFile> files = [];
         foreach (string filename in filePaths)
         {
             if (cancellationToken.IsCancellationRequested)
@@ -49,7 +49,7 @@ public partial class AusManifest
         matcher.AddExcludePatterns(exclusives);
         var filePaths = matcher.GetResultsInFullPath(directory);
 
-        List<AusFile> files = new();
+        List<AusFile> files = [];
         foreach (string filename in filePaths)
         {
             if (exclusives.Contains(filename))

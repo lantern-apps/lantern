@@ -4,6 +4,8 @@ using static Lantern.Win32.Interop.NativeMethods;
 
 namespace Lantern.Win32.Interop;
 
+#pragma warning disable CS0649
+
 internal class NativeUtilities
 {
     public unsafe static IntPtr LoadIcon(string? iconPath)

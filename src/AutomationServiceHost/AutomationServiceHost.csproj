@@ -11,4 +11,13 @@
     <ProjectReference Include="..\Lantern.AsService\Lantern.AsService.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="capcha\inr.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="capcha\out.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

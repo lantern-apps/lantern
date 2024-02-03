@@ -1,28 +1,37 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-	  <Version>1.0.0-alpha1.230510.1</Version>
-	  <RepositoryUrl>https://github.com/lantern-apps/lantern</RepositoryUrl>
-	  <PackageProjectUrl>https://github.com/lantern-apps/lantern</PackageProjectUrl>
-	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
-	  <PackageOutputPath>./../../nupkg</PackageOutputPath>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net7.0;net8.0</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<LangVersion>12</LangVersion>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Version>1.0.0-alpha1.230510.1</Version>
+		<RepositoryUrl>https://github.com/lantern-apps/lantern</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/lantern-apps/lantern</PackageProjectUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageOutputPath>./../../nupkg</PackageOutputPath>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="..\Lantern.Core\Extensions\StringExtensions.cs" Link="Extensions\StringExtensions.cs" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Include="..\Lantern.Core\Extensions\StringExtensions.cs" Link="Extensions\StringExtensions.cs" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
-  </ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Web.WebView2.DevToolsProtocolExtension" Version="1.0.2271" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Lantern.Core\Lantern.Core.csproj" />
-    <ProjectReference Include="..\Lantern.Win32\Lantern.Win32.csproj" />
-  </ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Lantern.Core\Lantern.Core.csproj" />
+		<ProjectReference Include="..\Lantern.Win32\Lantern.Win32.csproj" />
+	</ItemGroup>
 
 </Project>

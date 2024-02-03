@@ -6,6 +6,8 @@ using System.Text;
 
 namespace AutoUpdates;
 
+#pragma warning disable CA1816 // Dispose 方法应调用 SuppressFinalize
+
 /// <inheritdoc/>
 public class UpdateManager : IUpdateManager, IDisposable
 {
@@ -26,7 +28,7 @@ public class UpdateManager : IUpdateManager, IDisposable
     private readonly string _appName;
     private readonly string _entryFilePath;
     private readonly string _updateUrl;
-    private bool _updateUrlValid;
+    private readonly bool _updateUrlValid;
 
     private LockFile? _lockFile;
     private bool _isDisposed;
@@ -46,7 +48,7 @@ public class UpdateManager : IUpdateManager, IDisposable
 
         if (options.Exclusives == null)
         {
-            _exclusiveFiles = new string[] { ManifestName };
+            _exclusiveFiles = [ManifestName];
         }
         else
         {

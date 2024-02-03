@@ -39,5 +39,6 @@ public interface IWindow
     event Func<bool>? Closing;
     event Action<LogisticSize>? Resized;
     event Action<WindowState>? StateChanged;
+    event Action<bool>? VisibleChanged;
     event Action<LogisticPosition>? Moved;
 }

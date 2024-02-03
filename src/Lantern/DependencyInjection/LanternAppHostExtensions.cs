@@ -7,17 +7,17 @@ public static class LanternAppHostExtensions
 {
     public static async Task RunLanternAppAsync(this IHost host)
     {
-        var app = host.Services.GetRequiredService<ILanternHost>();
+        var app = host.Services.GetRequiredService<LanternApp>();
         var lifetime = host.Services.GetRequiredService<IAppLifetime>();
         lifetime.ApplicationStarted.Register(() => host.StartAsync());
         lifetime.ApplicationStopping.Register(() => host.StopAsync());
-        await app.StartAsync();
+        await app.StartAsync(default);
         await host.WaitForShutdownAsync();
     }
 
     public static void RunLanternApp(this IHost host)
     {
-        var app = host.Services.GetRequiredService<ILanternHost>();
+        var app = host.Services.GetRequiredService<LanternApp>();
         var lifetime = host.Services.GetRequiredService<IAppLifetime>();
         lifetime.ApplicationStarted.Register(() => host.StartAsync());
         lifetime.ApplicationStopping.Register(() => host.StopAsync());

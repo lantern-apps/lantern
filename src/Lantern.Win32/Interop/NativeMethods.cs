@@ -49,6 +49,10 @@ internal static class NativeMethods
     public static extern bool DestroyWindow(IntPtr hwnd);
 
     [DllImport("user32.dll")]
+    public static extern bool EnableWindow(IntPtr hWnd, bool bEnable);
+
+
+    [DllImport("user32.dll")]
     public static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
 
     [DllImport("user32.dll", SetLastError = true)]
@@ -121,6 +125,14 @@ internal static class NativeMethods
 
     [DllImport("user32.dll", SetLastError = true)]
     public static extern IntPtr GetActiveWindow();
+
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern IntPtr SetActiveWindow(IntPtr hWnd);
+
+
+    [DllImport("user32.dll")]
+    public static extern bool IsWindow(IntPtr hWnd);
+
 
     [DllImport("user32.dll")]
     public static extern bool SetParent(IntPtr hWnd, IntPtr hWndNewParent);

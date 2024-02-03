@@ -113,7 +113,7 @@ class Program
             UseShellExecute = false,
             CreateNoWindow = false,
 
-        }).WaitForExitAsync();
+        })!.WaitForExitAsync();
     }
 
     static void CopyDirectory(string sourceDirPath, string destDirPath, bool mapFileExtension)

@@ -2,21 +2,49 @@
 
 public partial class WebViewBrowser
 {
-    public async Task WaitForSelectorAsync(string selector, WaitForSelectorOptions? options = null)
+    public Task<int> WaitForSelectorAsync(string[] selectors, WaitForSelectorOptions? options = null)
     {
         options ??= WaitForSelectorOptions.Default;
 
         if (options.Timeout > TimeSpan.Zero)
         {
-            await WaitForSelectorAsync(selector, options.Timeout, options.CancellationToken);
+            return WaitForSelectorAsync(selectors, options.Timeout, options.CancellationToken);
         }
         else
         {
-            await WaitForSelectorAsync(selector, options.CancellationToken);
+            return WaitForSelectorAsync(selectors, options.CancellationToken);
         }
     }
 
-    private async Task WaitForSelectorAsync(string selector, TimeSpan timeout, CancellationToken cancellationToken)
+    public Task WaitForSelectorAsync(string selector, WaitForSelectorOptions? options = null)
+    {
+        options ??= WaitForSelectorOptions.Default;
+
+        if (options.Timeout > TimeSpan.Zero)
+        {
+            return WaitForSelectorAsync(selector, options.Detach, options.Timeout, options.CancellationToken);
+        }
+        else
+        {
+            return WaitForSelectorAsync(selector, options.Detach, options.CancellationToken);
+        }
+    }
+
+    public async Task WaitForSelectorAsync(string frameSelector, string selector, WaitForSelectorOptions? options = null)
+    {
+        options ??= WaitForSelectorOptions.Default;
+
+        if (options.Timeout > TimeSpan.Zero)
+        {
+            await WaitForSelectorAsync(frameSelector, selector, options.Timeout, options.CancellationToken);
+        }
+        else
+        {
+            await WaitForSelectorAsync(frameSelector, selector, options.CancellationToken);
+        }
+    }
+
+    private async Task WaitForSelectorAsync(string selector, bool detach, TimeSpan timeout, CancellationToken cancellationToken)
     {
         using var cts = new CancellationTokenSource(timeout);
         var timeoutToken = cts.Token;
@@ -24,19 +52,24 @@ public partial class WebViewBrowser
         {
             var value = await InvokeAsync(() =>
             {
-                if (cancellationToken.IsCancellationRequested)
-                    throw new OperationCanceledException(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+
                 if (timeoutToken.IsCancellationRequested)
                     throw new TimeoutException();
 
-                return _webview.ExecuteScriptAsync($"document.querySelector('{selector}') != null");
+                if (detach)
+                {
+                    return _webview.ExecuteScriptAsync($"document.querySelector(\"{selector}\") == null");
+                }
+                else
+                {
+                    return _webview.ExecuteScriptAsync($"document.querySelector(\"{selector}\") != null");
+                }
             });
 
             if (value == "true")
                 break;
-
-            if (cancellationToken.IsCancellationRequested)
-                throw new OperationCanceledException(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
 
             if (timeoutToken.IsCancellationRequested)
                 throw new TimeoutException();
@@ -47,10 +80,8 @@ public partial class WebViewBrowser
             }
             catch
             {
-                if (cancellationToken.IsCancellationRequested)
-                    throw new OperationCanceledException(cancellationToken);
-                else
-                    throw new TimeoutException();
+                cancellationToken.ThrowIfCancellationRequested();
+                throw new TimeoutException();
             }
 
             if (timeoutToken.IsCancellationRequested)
@@ -58,27 +89,167 @@ public partial class WebViewBrowser
         }
     }
 
-    private async Task WaitForSelectorAsync(string selector, CancellationToken cancellationToken)
+    private async Task<int> WaitForSelectorAsync(string[] selectors, CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            var value = await InvokeAsync(async () =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                for (int i = 0; i < selectors.Length; i++)
+                {
+                    var value = await _webview.ExecuteScriptAsync($"document.querySelector(\"{selectors[i]}\") != null");
+                    if (value == "true")
+                        return i;
+                }
+
+                return -1;
+            });
+
+            if (value >= 0)
+            {
+                return value;
+            }
+            await Task.Delay(100, cancellationToken);
+        }
+
+        return -1;
+    }
+
+    private async Task<int> WaitForSelectorAsync(string[] selectors, TimeSpan timeout, CancellationToken cancellationToken)
+    {
+        using var cts = new CancellationTokenSource(timeout);
+        var timeoutToken = cts.Token;
+        while (true)
+        {
+            var value = await InvokeAsync(async () =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if (timeoutToken.IsCancellationRequested)
+                    throw new TimeoutException();
+
+                for (int i = 0; i < selectors.Length; i++)
+                {
+                    var value = await _webview.ExecuteScriptAsync($"document.querySelector(\"{selectors[i]}\") != null");
+                    if (value == "true")
+                        return i;
+                }
+
+                return -1;
+            });
+
+            if (value >= 0)
+            {
+                return value;
+            }
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (timeoutToken.IsCancellationRequested)
+                throw new TimeoutException();
+
+            try
+            {
+                await Task.Delay(100, timeoutToken);
+            }
+            catch
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                throw new TimeoutException();
+            }
+
+            if (timeoutToken.IsCancellationRequested)
+                throw new TimeoutException();
+        }
+    }
+
+    private async Task WaitForSelectorAsync(string selector, bool detach, CancellationToken cancellationToken)
     {
         while (!cancellationToken.IsCancellationRequested)
         {
             var value = await InvokeAsync(() =>
             {
-                if (cancellationToken.IsCancellationRequested)
-                    throw new OperationCanceledException(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
 
-                return _webview.ExecuteScriptAsync($"document.querySelector('{selector}') != null");
+                if (detach)
+                {
+                    return _webview.ExecuteScriptAsync($"document.querySelector(\"{selector}\") == null");
+                }
+                else
+                {
+                    return _webview.ExecuteScriptAsync($"document.querySelector(\"{selector}\") != null");
+                }
             });
             if (value == "true")
                 break;
             await Task.Delay(100, cancellationToken);
         }
     }
+
+    private async Task WaitForSelectorAsync(string frameSelector, string selector, TimeSpan timeout, CancellationToken cancellationToken)
+    {
+        using var cts = new CancellationTokenSource(timeout);
+        var timeoutToken = cts.Token;
+        while (true)
+        {
+            var value = await InvokeAsync(() =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if (timeoutToken.IsCancellationRequested)
+                    throw new TimeoutException();
+
+                return _webview.ExecuteScriptAsync($"document.querySelector(\"{frameSelector}\")?.contentWindow?.document?.querySelector(\"{selector}\") != null");
+            });
+
+            if (value == "true")
+                break;
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (timeoutToken.IsCancellationRequested)
+                throw new TimeoutException();
+
+            try
+            {
+                await Task.Delay(100, timeoutToken);
+            }
+            catch
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                throw new TimeoutException();
+            }
+
+            if (timeoutToken.IsCancellationRequested)
+                throw new TimeoutException();
+        }
+    }
+
+
+
+    private async Task WaitForSelectorAsync(string frameSelector, string selector, CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            var value = await InvokeAsync(() =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                return _webview.ExecuteScriptAsync($"document.querySelector(\"{frameSelector}\")?.contentWindow?.document?.querySelector(\"{selector}\") != null");
+            });
+            if (value == "true")
+                break;
+            await Task.Delay(100, cancellationToken);
+        }
+    }
+
 }
 
-public class WaitForSelectorOptions
+public record WaitForSelectorOptions
 {
     internal static readonly WaitForSelectorOptions Default = new();
+
+    public bool Detach { get; set; }
     public TimeSpan Timeout { get; set; }
     public CancellationToken CancellationToken { get; set; }
 }

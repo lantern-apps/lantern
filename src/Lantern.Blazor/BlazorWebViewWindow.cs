@@ -1,6 +1,7 @@
 ﻿using Lantern.Platform;
 using Lantern.Windows;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebView;
 using Microsoft.Extensions.FileProviders;
 
 namespace Lantern.Blazor;
@@ -31,5 +32,15 @@ public class BlazorWebViewWindow : WebViewWindow
             "wwwroot/index.html");
         //_webViewManager.Navigate(_windowOptions.Url);
         base.OnWebViewInitialized();
+
+        _controller.CoreWebView2.WebResourceRequested += CoreWebView2_WebResourceRequested;
+    }
+
+    private void CoreWebView2_WebResourceRequested(object? sender, Microsoft.Web.WebView2.Core.CoreWebView2WebResourceRequestedEventArgs e)
+    {
+        var stream = _webViewManager.HandleWebRequest(this, "http", e.Request.Uri, out string contentType);
+
+        e.Response = _controller.CoreWebView2.Environment
+            .CreateWebResourceResponse(stream, 200, "OK", $"Content-Type: {contentType}");
     }
 }

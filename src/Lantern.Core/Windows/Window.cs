@@ -25,6 +25,8 @@ public class Window : IWindow
     public event Func<bool>? Closing;
     public event Action<LogisticSize>? Resized;
     public event Action<WindowState>? StateChanged;
+    public event Action<bool>? VisibleChanged;
+
     public event Action<LogisticPosition>? Moved;
 
     private LogisticSize _size;
@@ -199,6 +201,7 @@ public class Window : IWindow
         _visible = true;
         _impl.Show();
         OnVisibleChanged();
+        VisibleChanged?.Invoke(_visible);
     }
 
     public virtual void Hide()
@@ -206,6 +209,7 @@ public class Window : IWindow
         _visible = false;
         _impl.Hide();
         OnVisibleChanged();
+        VisibleChanged?.Invoke(_visible);
     }
 
     public virtual void Activate()
@@ -215,7 +219,10 @@ public class Window : IWindow
         _impl.Activate();
 
         if (changed)
+        {
             OnVisibleChanged();
+            VisibleChanged?.Invoke(_visible);
+        }
     }
 
     public virtual void Maximize() => _impl.SetWindowState(WindowState.Maximized);
@@ -231,7 +238,7 @@ public class Window : IWindow
     public virtual void Close(bool forceClose)
     {
         _forceClose = forceClose;
-        _impl.Close();
+        Close();
     }
 
     public virtual void Center()

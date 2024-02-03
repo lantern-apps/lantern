@@ -3,21 +3,14 @@ using Microsoft.Extensions.Logging;
 
 namespace AutoUpdates;
 
-public class AutoUpdateBackgroundService : BackgroundService
+public class AutoUpdateBackgroundService(
+    AutoUpdateBackgroundServiceOptions options,
+    IUpdateManager updateManager,
+    ILogger<AutoUpdateBackgroundService> logger) : BackgroundService
 {
-    protected readonly ILogger _logger;
-    protected readonly AutoUpdateBackgroundServiceOptions _options;
-    protected readonly IUpdateManager _updateManager;
-
-    public AutoUpdateBackgroundService(
-        AutoUpdateBackgroundServiceOptions options,
-        IUpdateManager updateManager,
-        ILogger<AutoUpdateBackgroundService> logger)
-    {
-        _options = options;
-        _updateManager = updateManager;
-        _logger = logger;
-    }
+    protected readonly ILogger _logger = logger;
+    protected readonly AutoUpdateBackgroundServiceOptions _options = options;
+    protected readonly IUpdateManager _updateManager = updateManager;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -54,13 +47,13 @@ public class AutoUpdateBackgroundService : BackgroundService
 
             if (patch.CanUpdate && !patch.IsPrepared)
             {
-                _logger.LogInformation($"Checked update {patch.Manifest.Version}");
+                _logger.LogInformation("Checked update {Version}", patch.Manifest.Version);
 
                 await OnUpdateCheckedAsync(patch.Manifest);
 
                 await _updateManager.PrepareUpdateAsync(patch, stoppingToken);
 
-                _logger.LogInformation($"Prepared update {patch.Manifest.Version}");
+                _logger.LogInformation("Prepared update {Version}", patch.Manifest.Version);
 
                 await OnUpdatePreparedAsync(patch.Manifest);
             }
@@ -77,7 +70,7 @@ public class AutoUpdateBackgroundService : BackgroundService
         {
             if (_updateManager.HasUpdatePrepared(out var version))
             {
-                _logger.LogInformation($"Launching update {version}");
+                _logger.LogInformation("Launching update {version}", version);
 
                 _updateManager.LaunchUpdater(version, new LaunchUpdaterOptions
                 {

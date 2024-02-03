@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lantern.AsService;
 
-public class WebBrowserManager : IWebBrowserManager
+public class WebBrowserManager : IWebBrowserManager, IDisposable
 {
     private readonly List<WebBrowserWindow> _windows = new();
     private readonly ILoggerFactory _loggerFactory;
@@ -21,6 +21,13 @@ public class WebBrowserManager : IWebBrowserManager
         _windowingPlatform = windowingPlatform;
         _environmentOptions = environmentOptions;
     }
+
+    public WebViewBrowser? Get(string name)
+    {
+        return _windows.FirstOrDefault(x => x.Name == name)?.Browser;
+    }
+
+    public IReadOnlyList<WebViewBrowser> GetAll() => _windows.Select(x => x.Browser).ToList().AsReadOnly();
 
     public async Task<WebViewBrowser> CreateAsync(WebViewWindowOptions windowOptions)
     {
@@ -52,5 +59,14 @@ public class WebBrowserManager : IWebBrowserManager
         window.Closed += () => _windows.Remove(window);
         _windows.Add(window);
         return window;
+    }
+
+    public void Dispose()
+    {
+        foreach (var window in _windows)
+        {
+            window.Close();
+        }
+        _windows.Clear();
     }
 }

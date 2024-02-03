@@ -2,28 +2,21 @@
 
 namespace Lantern.Windows;
 
-public class DialogProvider : IDialogProvider
+public class DialogProvider(IDialogPlatform dialogProvider) : IDialogProvider
 {
-    private readonly IDialogPlatform _dialogProvider;
-
-    public DialogProvider(IDialogPlatform dialogProvider)
-    {
-        _dialogProvider = dialogProvider;
-    }
-
     public void Alert(IWindow? parent, string title, string body, MessageIconType iconType = MessageIconType.None)
     {
-        _dialogProvider.Alert(parent == null ? null : ((Window)parent).WindowImpl, title, body);
+        dialogProvider.Alert(parent == null ? null : ((Window)parent).WindowImpl, title, body);
     }
 
     public bool Ask(IWindow? parent, string title, string body, MessageIconType iconType = MessageIconType.None)
     {
-        return _dialogProvider.Ask(parent == null ? null : ((Window)parent).WindowImpl, title, body);
+        return dialogProvider.Ask(parent == null ? null : ((Window)parent).WindowImpl, title, body);
     }
 
     public bool Confirm(IWindow? parent, string title, string body, MessageIconType iconType = MessageIconType.None)
     {
-        return _dialogProvider.Confirm(parent == null ? null : ((Window)parent).WindowImpl, title, body);
+        return dialogProvider.Confirm(parent == null ? null : ((Window)parent).WindowImpl, title, body);
     }
 
     public Task<string[]> OpenFileAsync(IWindow? parent, OpenFileDialogOptions options)
@@ -33,7 +26,7 @@ public class DialogProvider : IDialogProvider
             ValidationHelper.ValidateDirectoryExists(options.DefaultPath);
         }
 
-        return _dialogProvider.OpenFileAsync(parent == null ? null : ((Window)parent).WindowImpl, new FilePickerOpenOptions
+        return dialogProvider.OpenFileAsync(parent == null ? null : ((Window)parent).WindowImpl, new FilePickerOpenOptions
         {
             Title = options.Title,
             AllowMultiple = options.Multiple,
@@ -52,7 +45,7 @@ public class DialogProvider : IDialogProvider
             ValidationHelper.ValidateDirectoryExists(options.DefaultPath);
         }
 
-        return _dialogProvider.OpenFolderAsync(parent == null ? null : ((Window)parent).WindowImpl, new FolderPickerOpenOptions
+        return dialogProvider.OpenFolderAsync(parent == null ? null : ((Window)parent).WindowImpl, new FolderPickerOpenOptions
         {
             Title = options.Title,
             AllowMultiple = options.Multiple,
@@ -85,7 +78,7 @@ public class DialogProvider : IDialogProvider
             }
         }
 
-        return _dialogProvider.SaveFileAsync(parent == null ? null : ((Window)parent).WindowImpl, new FilePickerSaveOptions
+        return dialogProvider.SaveFileAsync(parent == null ? null : ((Window)parent).WindowImpl, new FilePickerSaveOptions
         {
             Title = options.Title,
             SuggestedStartLocation = startLocation,

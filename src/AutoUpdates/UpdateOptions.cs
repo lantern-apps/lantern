@@ -52,7 +52,7 @@ public class UpdateOptions
     /// <summary>
     /// Exclusive file path
     /// </summary>
-    public List<string> Exclusives { get; set; } = new();
+    public List<string> Exclusives { get; set; } = [];
 
     internal void Validate()
     {

@@ -51,7 +51,7 @@ public partial class WebViewBrowser
                 }
 
                 _webview.WebResourceResponseReceived -= handler;
-                tcs.SetResult(new WebViewHttpResponse(e, content));
+                tcs.TrySetResult(new WebViewHttpResponse(e, content));
             }
         };
 
@@ -118,19 +118,19 @@ public partial class WebViewBrowser
                 return;
             }
 
-            Stream? content = null;
-            try
-            {
-                content = options.LoadContent ? await e.Response.GetContentAsync() : null;
-            }
-            catch (Exception ex)
-            {
-                Debug.Fail(ex.Message);
-            }
-            var response = new WebViewHttpResponse(e, content);
-
             if (regex.IsMatch(e.Request.Uri))
             {
+                Stream? content = null;
+                try
+                {
+                    content = options.LoadContent ? await e.Response.GetContentAsync() : null;
+                }
+                catch (Exception ex)
+                {
+                    Debug.Fail(ex.Message);
+                }
+
+                var response = new WebViewHttpResponse(e, content);
                 if (!await next(response))
                 {
                     _webview.WebResourceResponseReceived -= handler;

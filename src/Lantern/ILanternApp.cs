@@ -1,7 +1,5 @@
 ﻿namespace Lantern;
 
-public interface ILanternApp
+public interface ILanternApp : ILanternHost
 {
-    IServiceProvider Services { get; }
-    void Stop();
 }

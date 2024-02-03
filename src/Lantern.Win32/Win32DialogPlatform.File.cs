@@ -56,7 +56,7 @@ internal partial class Win32DialogPlatform : IDialogPlatform
     {
         return Task.Run(() =>
         {
-            IEnumerable<string> result = Array.Empty<string>();
+            IEnumerable<string> result = [];
             try
             {
                 var clsid = isOpenFile ? NativeMethods.ShellIds.OpenFileDialog : NativeMethods.ShellIds.SaveFileDialog;
@@ -157,7 +157,7 @@ internal partial class Win32DialogPlatform : IDialogPlatform
                 else if (frm.Result is { } shellItem
                     && GetAbsoluteFilePath(shellItem) is { } singleResult)
                 {
-                    result = new[] { singleResult };
+                    result = [singleResult];
                 }
 
                 return result;
@@ -191,11 +191,11 @@ internal partial class Win32DialogPlatform : IDialogPlatform
     {
         if (filters == null || filters.Count == 0)
         {
-            filters = new List<FilePickerFileType> { FilePickerFileTypes.All };
+            filters = [FilePickerFileTypes.All];
         }
 
         var size = Marshal.SizeOf<NativeMethods.COMDLG_FILTERSPEC>();
-        var arr = new byte[size];
+        //var arr = new byte[size];
         var resultArr = new byte[size * filters.Count];
 
         for (int i = 0; i < filters.Count; i++)

@@ -11,8 +11,8 @@ namespace Lantern.Win32;
 public class Win32Platform : IPlatformThreadingInterface, IWindowingPlatform, INotifyingPlatform
 {
     internal static readonly Win32Platform Instance = new();
-    private static Thread? _uiThread;
 
+    private Thread? _uiThread;
     private WndProc _wndProcDelegate = null!;
     private IntPtr _hwnd;
 

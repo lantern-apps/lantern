@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Threading;
-using static Lantern.Win32.Interop.NativeMethods;
 
 namespace Lantern.Win32.Interop;
+
+#pragma warning disable CS8618
+#pragma warning disable CS0649
 
 internal static class NativeMethods
 {

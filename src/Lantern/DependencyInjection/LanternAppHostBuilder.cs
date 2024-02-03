@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lantern;
 
-public class LanternAppHostBuilder : ILanternHostBuilder
+public class LanternAppHostBuilder
 {
     private const string DefaultWindowName = "default";
     private const string DefaultTrayName = "default";
@@ -50,8 +50,8 @@ public class LanternAppHostBuilder : ILanternHostBuilder
         _services.AddSingleton(_envOptions);
         _services.AddSingleton(_ipcOptions);
         _services.AddSingleton(_lanternOptions);
-        _services.AddSingleton<ILanternHost, LanternApp>();
-        _services.AddSingleton<ILanternApp>(services => (LanternApp)services.GetRequiredService<ILanternHost>());
+        //_services.AddSingleton<ILanternHost, LanternApp>();
+        _services.AddSingleton<ILanternApp, LanternApp>();
         _services.AddSingleton<AppLifetime>();
         _services.AddSingleton<IAppLifetime>(services => services.GetRequiredService<AppLifetime>());
         _services.AddSingleton<IDialogProvider, DialogProvider>();
@@ -267,13 +267,13 @@ public class LanternAppHostBuilder : ILanternHostBuilder
         return this;
     }
 
-    public ILanternHost Build()
+    public ILanternApp Build()
     {
         ApplyConfigure();
 
         ((ServiceCollection)Services).MakeReadOnly();
         var services = ((ServiceCollection)Services).BuildServiceProvider();
-        return services.GetRequiredService<ILanternHost>();
+        return services.GetRequiredService<ILanternApp>();
     }
 
     public void ApplyConfigure()

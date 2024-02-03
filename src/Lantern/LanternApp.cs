@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace Lantern;
 
-public partial class LanternApp : ILanternHost, ILanternApp
+public partial class LanternApp : ILanternApp
 {
     private readonly LanternOptions _options;
 
@@ -72,6 +72,16 @@ public partial class LanternApp : ILanternHost, ILanternApp
         }
 
         RunThread(true);
+    }
+
+    public void Start()
+    {
+        if (!PrepareToRun())
+        {
+            return;
+        }
+
+        RunThread(false);
     }
 
     public async Task RunAsync(CancellationToken cancellationToken = default)
@@ -246,4 +256,5 @@ public partial class LanternApp : ILanternHost, ILanternApp
         }
         catch (ThreadStateException) { }
     }
+
 }

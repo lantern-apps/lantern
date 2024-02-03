@@ -21,8 +21,7 @@ public class WebBrowserWindow : WebViewWindow
 
     protected override void OnWebViewInitialized()
     {
-        Browser = new WebViewBrowser(this, CoreWebView!, _logger);
+        Browser = new WebViewBrowser(this, _controller!, _logger);
         base.OnWebViewInitialized();
     }
 }
-

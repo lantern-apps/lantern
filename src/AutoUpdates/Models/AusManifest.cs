@@ -13,11 +13,11 @@ public partial class AusManifest
     public required Version Version { get; set; }
 
     [JsonPropertyName("files")]
-    public required IList<AusFile> Files { get; set; } = new List<AusFile>();
+    public required IList<AusFile> Files { get; set; } = [];
 
     public IReadOnlyList<AusFile> CheckForUpdates(AusManifest package)
     {
-        List<AusFile> updates = new();
+        List<AusFile> updates = [];
 
         if (package.Version.Equals(Version))
             return updates;
@@ -50,7 +50,7 @@ public partial class AusManifest
                 Name = x.Name,
                 Hash = x.Hash,
                 Size = x.Size,
-            })?.ToList() ?? new List<AusFile>()
+            })?.ToList() ?? []
         };
     }
 
@@ -65,7 +65,7 @@ public partial class AusManifest
                 Name = x.Name,
                 Hash = x.Hash,
                 Size = x.Size,
-            })?.ToList() ?? new List<AusFile>()
+            })?.ToList() ?? []
         };
 
         foreach (var file in patch.Files)

@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFrameworks>net7.0;net8.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<LangVersion>12</LangVersion>
 		<RepositoryUrl>https://github.com/lantern-apps/lantern</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/lantern-apps/lantern</PackageProjectUrl>
 		<Version>1.0.0-alpha1.230418.1</Version>
@@ -13,17 +14,25 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="../AutoUpdates.Updater/bin/Release/net7.0/publish/win-x64/AutoUpdates.Updater.exe">
+		<EmbeddedResource Include="../AutoUpdates.Updater/bin/Release/net8.0/publish/win-x64/AutoUpdates.Updater.exe">
 			<Link>Updater.exe</Link>
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 			<Visible>false</Visible>
 		</EmbeddedResource>
 	</ItemGroup>
 
-	<ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
 		<PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+		<PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\AutoUpdates.Updater\AutoUpdates.Updater.csproj" />
 	</ItemGroup>
 
 </Project>

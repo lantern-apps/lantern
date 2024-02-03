@@ -7,7 +7,9 @@ namespace Lantern.Win32;
 
 public partial class TrayIconImpl : ITrayIconImpl, IDisposable
 {
+#pragma warning disable CA1416 // 验证平台兼容性
     private static readonly IntPtr s_emptyIcon = new System.Drawing.Bitmap(32, 32).GetHicon();
+#pragma warning restore CA1416 // 验证平台兼容性
 
     private int _id = 1;
     private static int s_nextUniqueId;

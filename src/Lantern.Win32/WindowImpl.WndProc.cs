@@ -8,6 +8,8 @@ namespace Lantern.Win32;
 
 public partial class WindowImpl
 {
+    private bool _isCloseRequested;
+
     protected virtual void OnPaint(IntPtr hWnd) { }
 
     protected virtual unsafe IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
@@ -146,6 +148,12 @@ public partial class WindowImpl
                         {
                             return IntPtr.Zero;
                         }
+
+                        BeforeCloseCleanup(false);
+
+                        // Used to distinguish between programmatic and regular close requests.
+                        _isCloseRequested = true;
+
                         break;
                     }
                 case WindowsMessage.WM_DESTROY:
@@ -154,6 +162,7 @@ public partial class WindowImpl
                         _instances.Remove(this);
 
                         Closed?.Invoke();
+                        Dispose();
                         Dispatcher.UIThread.Post(OnDestory);
                         return IntPtr.Zero;
                     }
@@ -207,9 +216,39 @@ public partial class WindowImpl
     {
         if (_hwnd != IntPtr.Zero)
         {
-            _instances.Remove(this);
+            if (!_isCloseRequested)
+            {
+                BeforeCloseCleanup(true);
+            }
+
             DestroyWindow(_hwnd);
             _hwnd = IntPtr.Zero;
+        }
+    }
+
+    private void BeforeCloseCleanup(bool isDisposing)
+    {
+        // Based on https://github.com/dotnet/wpf/blob/master/src/Microsoft.DotNet.Wpf/src/PresentationFramework/System/Windows/Window.cs#L4270-L4337
+        // We need to enable parent window before destroying child window to prevent OS from activating a random window behind us (or last active window).
+        // This is described here: https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enablewindow#remarks
+        // We need to verify if parent is still alive (perhaps it got destroyed somehow).
+        if (_parent != null && IsWindow(_parent._hwnd))
+        {
+            var wasActive = GetActiveWindow() == _hwnd;
+
+            // We can only set enabled state if we are not disposing - generally Dispose happens after enabled state has been set.
+            // Ignoring this would cause us to enable a window that might be disabled.
+            if (!isDisposing)
+            {
+                // Our window closed callback will set enabled state to a correct value after child window gets destroyed.
+                EnableWindow(_parent._hwnd, true);
+            }
+
+            // We also need to activate our parent window since again OS might try to activate a window behind if it is not set.
+            if (wasActive)
+            {
+                SetActiveWindow(_parent._hwnd);
+            }
         }
     }
 

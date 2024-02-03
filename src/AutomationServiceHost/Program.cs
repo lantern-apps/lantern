@@ -1,4 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using AutomationServiceHost.Services;
 using Lantern;
 using Lantern.AsService;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,30 +12,28 @@ serviceCollection.AddLanternAsService(options =>
 });
 
 var services = serviceCollection.BuildServiceProvider();
-var manager = services.GetRequiredService<IWebBrowserManager>();
+
 var host = services.GetRequiredService<LanternService>();
 await host.StartAsync();
 
-var window1 = await manager.CreateAsync(new Lantern.Windows.WebViewWindowOptions
+var manager = new TiktokSessionManager(services.GetRequiredService<IWebBrowserManager>());
+
+await manager.CreateAsync("xiao.xin@outlook.com", "P#ssw0rd!");
+await manager.CreateAsync("adam.xx@qq.com", "adaxin()123");
+
+//await manager.CreateAsync("a1");
+//await manager.CreateAsync("a2");
+
+await manager.BlukAsync(async (session, ct) =>
 {
-    Url = "https://www.tiktok.com/",
-    ProfileName = "a2",
-    Title = "a2",
-    WindowTitleHandling = Lantern.Windows.WebViewWindowTitleHandling.AlwaysUseUserSetting,
-    NewWindowHandling = Lantern.Windows.WebViewNewWindowHandling.WebViewDefault,
-    AreDevToolsEnabled = true,
-    AreBrowserAcceleratorKeysEnabled = true,
+    await session.LoginAsync(ct);
+    await session.FollowAsync("tea520530");
 });
 
-var window2 = await manager.CreateAsync(new Lantern.Windows.WebViewWindowOptions
-{
-    Url = "https://www.tiktok.com/",
-    ProfileName = "a1",
-    Title = "a1",
-    WindowTitleHandling = Lantern.Windows.WebViewWindowTitleHandling.AlwaysUseUserSetting,
-    NewWindowHandling = Lantern.Windows.WebViewNewWindowHandling.WebViewDefault,
-    AreDevToolsEnabled = true,
-    AreBrowserAcceleratorKeysEnabled = true,
-});
+//await manager.BlukAsync((session, ct) =>
+//{
+//    return session.PublishVideoAsync("D:\\我的桌面\\智能文档传作助手.mp4", ct);
+//});
 
 Console.ReadLine();
+

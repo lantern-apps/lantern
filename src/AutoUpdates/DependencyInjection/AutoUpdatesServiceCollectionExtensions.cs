@@ -11,8 +11,7 @@ public static class AutoUpdatesServiceCollectionExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static IServiceCollection AddAutoUpdateBackgroundService(this IServiceCollection services, Action<AutoUpdateBackgroundServiceOptions> optionsAction)
     {
-        if (optionsAction == null)
-            throw new ArgumentNullException(nameof(optionsAction));
+        ArgumentNullException.ThrowIfNull(optionsAction, nameof(optionsAction));
 
         AutoUpdateBackgroundServiceOptions options = new();
         optionsAction(options);
@@ -31,8 +30,7 @@ public static class AutoUpdatesServiceCollectionExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static IServiceCollection AddAutoUpdateManager(this IServiceCollection services, Action<UpdateOptions> optionsAction)
     {
-        if (optionsAction == null)
-            throw new ArgumentNullException(nameof(optionsAction));
+        ArgumentNullException.ThrowIfNull(optionsAction, nameof(optionsAction));
 
         UpdateOptions options = new();
         optionsAction(options);
@@ -46,8 +44,7 @@ public static class AutoUpdatesServiceCollectionExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static IServiceCollection AddAutoUpdateManager(this IServiceCollection services, UpdateOptions options)
     {
-        if (options == null)
-            throw new ArgumentNullException(nameof(options));
+        ArgumentNullException.ThrowIfNull(options, nameof(options));
 
         options.Validate();
 

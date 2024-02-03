@@ -58,7 +58,14 @@ public class MenuItemOptions
     [JsonConstructor]
     public MenuItemOptions() { }
 
-    public MenuItemOptions(string id, string text, string? command = null)
+    public MenuItemOptions(string text, string? command = null)
+    {
+        Text = text;
+        Type = MenuItemType.Normal;
+        Command = command;
+    }
+
+    public MenuItemOptions(string id, string text, string? command)
     {
         Id = id;
         Text = text;

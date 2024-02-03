@@ -7,11 +7,11 @@ public class WebViewHttpResponse
     private readonly CoreWebView2WebResourceResponseReceivedEventArgs _response;
     private readonly string _reasonPhrase;
     private readonly int _statusCode;
-    private readonly Dictionary<string, string> _headers = new();
+    private readonly Dictionary<string, string> _headers = [];
     private readonly WebViewHttpRequest _request;
     private readonly Stream? _body;
 
-    public WebViewHttpResponse(CoreWebView2WebResourceResponseReceivedEventArgs response,Stream? body)
+    public WebViewHttpResponse(CoreWebView2WebResourceResponseReceivedEventArgs response, Stream? body)
     {
         _response = response;
         _reasonPhrase = _response.Response.ReasonPhrase;

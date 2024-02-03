@@ -14,6 +14,7 @@ public static class LanternAsServiceCollectionExtensions
         services.TryAddSingleton(options);
         services.AddSingleton<IWebBrowserManager, WebBrowserManager>();
         services.AddSingleton<LanternService>();
+        services.AddSingleton<ILanternHost>(x => x.GetRequiredService<LanternService>());
         services.AddLogging();
 
         if (Environment.OSVersion.Platform == PlatformID.Win32NT)

@@ -11,7 +11,6 @@ public class UpdateService : ILanternService
     private readonly IUpdateManager _updateManager;
     private readonly IAppLifetime _lifetime;
     private readonly IEventEmitter _eventEmitter;
-    private bool _disabled;
     private Timer? _timer;
 
     public UpdateService(
@@ -38,11 +37,6 @@ public class UpdateService : ILanternService
         }
 
         CheckSetupUpdate(true);
-
-        if (_disabled)
-        {
-            return;
-        }
 
         _lifetime.ApplicationStarted.Register(() =>
         {

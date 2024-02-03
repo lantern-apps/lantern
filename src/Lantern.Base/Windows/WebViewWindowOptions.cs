@@ -68,6 +68,7 @@ public class WebViewWindowOptions
 
     public string? ProfileName { get; set; }
     public bool IsInPrivateModeEnabled { get; set; }
+    public string? Language { get; set; }
 
     public string? UserAgent { get; set; }
     

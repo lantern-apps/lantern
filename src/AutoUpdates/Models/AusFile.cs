@@ -6,10 +6,10 @@ namespace AutoUpdates;
 public class AusFile
 {
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     [JsonPropertyName("hash")]
-    public string Hash { get; set; }
+    public string Hash { get; set; } = null!;
 
     [JsonPropertyName("size")]
     public long Size { get; set; }

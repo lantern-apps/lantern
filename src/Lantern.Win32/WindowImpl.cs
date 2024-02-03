@@ -35,6 +35,8 @@ public partial class WindowImpl : IWindowImpl, IDisposable
     public string? Title => _title;
     public WindowState WindowState => _windowState;
 
+    public bool IsShow => _shown;
+
     public IScreenImpl Screen => Win32Platform.Instance.Screen;
 
     public virtual void SetWindowState(WindowState windowState)
