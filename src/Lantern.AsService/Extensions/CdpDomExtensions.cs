@@ -6,7 +6,12 @@ public static class CdpDomExtensions
 {
     public static DOM.Node? Find(this DOM.Node node, string nodeName)
     {
-        if (node.NodeName == nodeName)
+        return Find(node, node => node.NodeName == nodeName);
+    }
+
+    public static DOM.Node? Find(this DOM.Node node, Func<DOM.Node, bool> selector)
+    {
+        if (selector(node))
         {
             return node;
         }
@@ -15,7 +20,7 @@ public static class CdpDomExtensions
         {
             foreach (var child in node.Children)
             {
-                var result = Find(child, nodeName);
+                var result = Find(child, selector);
                 if (result != null)
                     return result;
             }
@@ -23,4 +28,5 @@ public static class CdpDomExtensions
 
         return null;
     }
+
 }
