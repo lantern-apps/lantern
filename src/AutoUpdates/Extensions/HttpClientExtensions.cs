@@ -7,7 +7,7 @@ internal static class HttpClientExtensions
 {
     public static async Task<AusManifest?> GetManifestAsync(this HttpClient httpClient, Version version, CancellationToken cancellationToken)
     {
-        var response = await httpClient.GetAsync($"{version}/.manifest", cancellationToken).ConfigureAwait(false);
+        var response = await httpClient.GetAsync($"{version}/{UpdateManager.ManifestName}", cancellationToken).ConfigureAwait(false);
         if (response.IsSuccessStatusCode)
         {
             return await response.Content.ReadFromJsonAsync<AusManifest?>(cancellationToken: cancellationToken).ConfigureAwait(false);

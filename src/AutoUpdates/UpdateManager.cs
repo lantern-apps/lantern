@@ -11,9 +11,9 @@ namespace AutoUpdates;
 /// <inheritdoc/>
 public class UpdateManager : IUpdateManager, IDisposable
 {
-    private const string UpdaterResourceName = "AutoUpdates.Updater.exe";
-    private const string ManifestName = ".manifest";
-    private const string FileExtensions = ".deploy";
+    internal const string UpdaterResourceName = "AutoUpdates.Updater.exe";
+    internal const string ManifestName = "appupdates.json";
+    internal const string FileExtensions = ".deploy";
 
     private static readonly string _updateDirectory = AppDomain.CurrentDomain.BaseDirectory;
     private static readonly string _manifestFilePath = Path.Combine(_updateDirectory, ManifestName);
