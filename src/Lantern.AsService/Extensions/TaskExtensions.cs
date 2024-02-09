@@ -1,6 +1,6 @@
 ﻿namespace Lantern.AsService;
 
-internal static class TaskExtensions
+public static class TaskExtensions
 {
     public static async Task WithCancellation(this Task task, CancellationToken cancellationToken)
     {

@@ -377,19 +377,11 @@ public class LoadOptions
     public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
 }
 
-public class LoadResponse
+public class LoadResponse(bool success, string url, int httpStatusCode, WebViewErrorStatus? errorStatus)
 {
-    public LoadResponse(bool success, string url, int httpStatusCode, WebViewErrorStatus? errorStatus)
-    {
-        ErrorStatus = errorStatus;
-        HttpStatusCode = httpStatusCode;
-        Url = url;
-        Success = success;
-    }
-
-    public WebViewErrorStatus? ErrorStatus { get; }
-    public int HttpStatusCode { get; }
-    public bool Success { get; }
-    public string Url { get; }
+    public WebViewErrorStatus? ErrorStatus { get; } = errorStatus;
+    public int HttpStatusCode { get; } = httpStatusCode;
+    public bool Success { get; } = success;
+    public string Url { get; } = url;
 
 }

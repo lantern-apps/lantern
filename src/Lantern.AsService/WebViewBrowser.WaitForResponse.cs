@@ -288,7 +288,6 @@ public partial class WebViewBrowser
         var waiter = WaitForResponseAsync(urlOrPredicate, options);
         var task = action();
         await Task.WhenAll(waiter, task).WithCancellation(options.Timeout, options.CancellationToken);
-
         return waiter.Result;
     }
 
