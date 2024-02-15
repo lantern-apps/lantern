@@ -187,7 +187,7 @@ internal class Program
 
             if (root)
             {
-                if (destFileName == ".manifest")
+                if (destFileName == "appupdates.json")
                 {
                     manifest_source = sourceFilePath;
                     manifest_dest = destFilePath;
