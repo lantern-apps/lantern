@@ -1,6 +1,7 @@
 ﻿using Lantern.Platform;
 using Lantern.Win32.Interop;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Lantern.Win32;
 
@@ -32,8 +33,8 @@ public class Win32SingleProcessInstanceManager : ISingleProcessInstanceManager, 
     {
         if (_mutex != null)
             return false;
-
-        var mutex = new Mutex(true, "Lantern", out bool prevInstance);
+        
+        var mutex = new Mutex(true, Assembly.GetEntryAssembly()?.GetName()?.Name ?? "Lantern", out bool prevInstance);
         if (prevInstance)
             _mutex = mutex;
 
