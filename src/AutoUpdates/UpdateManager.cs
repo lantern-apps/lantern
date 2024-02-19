@@ -12,7 +12,7 @@ namespace AutoUpdates;
 public class UpdateManager : IUpdateManager, IDisposable
 {
     internal const string UpdaterResourceName = "AutoUpdates.Updater.exe";
-    internal const string ManifestName = "appupdates.json";
+    internal const string ManifestName = "manifest.json";
     internal const string FileExtensions = ".deploy";
 
     private static readonly string _updateDirectory = AppDomain.CurrentDomain.BaseDirectory;
