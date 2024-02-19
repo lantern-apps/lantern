@@ -187,7 +187,7 @@ internal class Program
 
             if (root)
             {
-                if (destFileName == "manifest.json")
+                if (destFileName == "manifest.json" || destFileName == ".manifest")
                 {
                     manifest_source = sourceFilePath;
                     manifest_dest = destFilePath;

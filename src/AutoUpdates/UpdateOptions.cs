@@ -49,6 +49,8 @@ public class UpdateOptions
     /// </summary>
     public string? UpdaterName { get; set; }
 
+    public string? ManifestName { get; set; }
+
     /// <summary>
     /// Exclusive file path
     /// </summary>

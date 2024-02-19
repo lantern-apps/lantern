@@ -12,11 +12,13 @@ namespace AutoUpdates;
 public class UpdateManager : IUpdateManager, IDisposable
 {
     internal const string UpdaterResourceName = "AutoUpdates.Updater.exe";
-    internal const string ManifestName = "manifest.json";
+    internal const string DefaultManifestName = "manifest.json";
     internal const string FileExtensions = ".deploy";
 
     private static readonly string _updateDirectory = AppDomain.CurrentDomain.BaseDirectory;
-    private static readonly string _manifestFilePath = Path.Combine(_updateDirectory, ManifestName);
+
+    private readonly string _manifestName;
+    private readonly string _manifestFilePath;
 
     private readonly string _storageDirPath;
     private readonly string _lockFilePath;
@@ -46,14 +48,17 @@ public class UpdateManager : IUpdateManager, IDisposable
         _entryFilePath = options.EntryFilePath ?? assembly.Location!;
         _applicationDir = Path.GetDirectoryName(_entryFilePath)!;
 
+        _manifestName = options.ManifestName ?? DefaultManifestName;
+        _manifestFilePath = _manifestFilePath = Path.Combine(_updateDirectory, _manifestName);
+
         if (options.Exclusives == null)
         {
-            _exclusiveFiles = [ManifestName];
+            _exclusiveFiles = [_manifestName];
         }
         else
         {
             _exclusiveFiles = new string[options.Exclusives.Count + 1];
-            _exclusiveFiles[0] = ManifestName;
+            _exclusiveFiles[0] = _manifestName;
             options.Exclusives.CopyTo(_exclusiveFiles, 1);
         }
 
@@ -173,7 +178,7 @@ public class UpdateManager : IUpdateManager, IDisposable
             return UpdatePatch.Empty;
         }
 
-        var remote = await httpClient.GetManifestAsync(version.Version, cancellationToken);
+        var remote = await httpClient.GetManifestAsync(_manifestName, version.Version, cancellationToken);
 
         if (remote == null)
         {
@@ -245,7 +250,7 @@ public class UpdateManager : IUpdateManager, IDisposable
         await EnsurePrepareManifestAsync(cancellationToken);
 
         var manifest = Manifest.ApplyPatch(patch.Manifest);
-        manifest.SaveAs(Path.Combine(destDirPath, ManifestName));
+        manifest.SaveAs(Path.Combine(destDirPath, _manifestName));
 
         await Assembly.GetExecutingAssembly().ExtractManifestResourceAsync(UpdaterResourceName, _updaterFilePath);
     }
@@ -290,7 +295,7 @@ public class UpdateManager : IUpdateManager, IDisposable
 
         var baseDir = Path.Combine(_storageDirPath, version.ToString());
 
-        var manifestFilePath = Path.Combine(baseDir, ManifestName);
+        var manifestFilePath = Path.Combine(baseDir, _manifestName);
 
         if (!File.Exists(manifestFilePath) || !File.Exists(_updaterFilePath))
             return false;

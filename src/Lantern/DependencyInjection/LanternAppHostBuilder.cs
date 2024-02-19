@@ -329,6 +329,7 @@ public class LanternAppHostBuilder
             Version = _lanternOptions.Version,
             AppName = _lanternOptions.AppName,
             UpdaterName = _lanternOptions.Updater.UpdaterName,
+            ManifestName = _lanternOptions.Updater.ManifestName,
             ServerAddress = _lanternOptions.Updater.ServerAddress,
             TempFilePath = _lanternOptions.Updater.UpdateDataPath,
         });

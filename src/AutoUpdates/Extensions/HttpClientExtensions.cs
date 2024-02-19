@@ -5,9 +5,9 @@ namespace AutoUpdates;
 
 internal static class HttpClientExtensions
 {
-    public static async Task<AusManifest?> GetManifestAsync(this HttpClient httpClient, Version version, CancellationToken cancellationToken)
+    public static async Task<AusManifest?> GetManifestAsync(this HttpClient httpClient, string manifestName, Version version, CancellationToken cancellationToken)
     {
-        var response = await httpClient.GetAsync($"{version}/{UpdateManager.ManifestName}", cancellationToken).ConfigureAwait(false);
+        var response = await httpClient.GetAsync($"{version}/{manifestName}", cancellationToken).ConfigureAwait(false);
         if (response.IsSuccessStatusCode)
         {
             return await response.Content.ReadFromJsonAsync<AusManifest?>(cancellationToken: cancellationToken).ConfigureAwait(false);
