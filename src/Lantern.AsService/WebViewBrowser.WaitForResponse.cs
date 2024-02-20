@@ -44,6 +44,7 @@ public partial class WebViewBrowser
                 try
                 {
                     content = options.LoadContent ? await e.Response.GetContentAsync() : null;
+                    //content = options.LoadContent ? await InvokeAsync(e.Response.GetContentAsync) : null;
                 }
                 catch (Exception ex)
                 {
@@ -57,7 +58,7 @@ public partial class WebViewBrowser
 
     }
 
-    public void SubscribeResponse(string urlOrPredicate, Func<WebViewHttpResponse, Task<bool>> next, WaitForResponseOptions? options = null)
+    public void SubscribeResponse(string urlOrPredicate, string? httpMethod, Func<WebViewHttpResponse, Task<bool>> next, WaitForResponseOptions? options = null)
     {
         options ??= WaitForResponseOptions.Default;
         var regex = urlOrPredicate.GlobToRegex() ?? throw new ArgumentException("Argument invalid", nameof(urlOrPredicate));
@@ -70,12 +71,13 @@ public partial class WebViewBrowser
             {
                 _webview.WebResourceResponseReceived -= handler;
             }
-            else
+            else if ((httpMethod == null || string.Equals(e.Request.Method, httpMethod, StringComparison.OrdinalIgnoreCase)) && regex.IsMatch(e.Request.Uri))
             {
                 Stream? content = null;
                 try
                 {
                     content = options.LoadContent ? await e.Response.GetContentAsync() : null;
+                    //content = options.LoadContent ? await InvokeAsync(e.Response.GetContentAsync) : null;
                 }
                 catch (Exception ex)
                 {
@@ -83,15 +85,18 @@ public partial class WebViewBrowser
                 }
                 var response = new WebViewHttpResponse(e, content);
 
-                if (regex.IsMatch(e.Request.Uri))
+                if (!await next(response))
                 {
-                    if (!await next(response))
-                    {
-                        _webview.WebResourceResponseReceived -= handler;
-                    }
+                    _webview.WebResourceResponseReceived -= handler;
                 }
             }
         };
+
+    }
+
+    public void SubscribeResponse(string urlOrPredicate, Func<WebViewHttpResponse, Task<bool>> next, WaitForResponseOptions? options = null)
+    {
+        SubscribeResponse(urlOrPredicate, null, next, options);
     }
 
     public async Task SubscribeResponseAsync(string urlOrPredicate, Func<WebViewHttpResponse, Task<bool>> next, WaitForResponseOptions? options = null)
@@ -124,6 +129,7 @@ public partial class WebViewBrowser
                 try
                 {
                     content = options.LoadContent ? await e.Response.GetContentAsync() : null;
+                    //content = options.LoadContent ? await InvokeAsync(e.Response.GetContentAsync) : null;
                 }
                 catch (Exception ex)
                 {
@@ -158,6 +164,7 @@ public partial class WebViewBrowser
             try
             {
                 content = options.LoadContent ? await e.Response.GetContentAsync() : null;
+                //content = options.LoadContent ? await InvokeAsync(e.Response.GetContentAsync) : null;
             }
             catch (Exception ex)
             {
@@ -199,6 +206,7 @@ public partial class WebViewBrowser
             try
             {
                 content = options.LoadContent ? await e.Response.GetContentAsync() : null;
+                //content = options.LoadContent ? await InvokeAsync(e.Response.GetContentAsync) : null;
             }
             catch (Exception ex)
             {
@@ -242,6 +250,7 @@ public partial class WebViewBrowser
             try
             {
                 content = options.LoadContent ? await e.Response.GetContentAsync() : null;
+                //content = options.LoadContent ? await InvokeAsync(e.Response.GetContentAsync) : null;
             }
             catch (Exception ex)
             {
