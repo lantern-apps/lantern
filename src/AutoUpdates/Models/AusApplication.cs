@@ -6,10 +6,10 @@ namespace AutoUpdates;
 public class AusApplication
 {
     [JsonPropertyName("name")]
-    public required string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     [JsonPropertyName("versions")]
-    public required AusAppVersion[] Versions { get; set; }
+    public AusAppVersion[] Versions { get; set; } = [];
 
     public AusAppVersion? GetLatestVersion()
     {
@@ -31,19 +31,7 @@ public class AusApplication
 
     public void SaveAs(string path)
     {
-        var json = JsonSerializer.Serialize(this, JsonSerializerOptionsHelper.SerializerOptions);
+        var json = JsonSerializer.Serialize(this, typeof(AusApplication), ManifestJsonSerializerContext.DefaultContext);
         File.WriteAllText(path, json);
     }
-}
-
-public class AusAppVersion
-{
-    [JsonPropertyName("version")]
-    public required Version Version { get; set; }
-
-    [JsonPropertyName("description")]
-    public string? Description { get; set; }
-
-    [JsonPropertyName("mapFileExtensions")]
-    public bool MapFileExtensions { get; set; }
 }

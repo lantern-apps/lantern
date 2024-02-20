@@ -425,11 +425,7 @@ public class UpdateManager : IUpdateManager, IDisposable
             throw new Exception("UpdaterAlreadyLaunchedException");
     }
 
-    private void EnsureNotDisposed()
-    {
-        if (_isDisposed)
-            throw new ObjectDisposedException(GetType().FullName);
-    }
+    private void EnsureNotDisposed() => ObjectDisposedException.ThrowIf(_isDisposed, this);
 
     private HttpClient CreateHttpClient()
     {

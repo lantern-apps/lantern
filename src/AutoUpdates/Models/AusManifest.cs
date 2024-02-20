@@ -7,13 +7,13 @@ public partial class AusManifest
 {
 
     [JsonPropertyName("name")]
-    public required string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     [JsonPropertyName("version")]
-    public required Version Version { get; set; }
+    public Version Version { get; set; } = new Version(0, 0, 1);
 
     [JsonPropertyName("files")]
-    public required IList<AusFile> Files { get; set; } = [];
+    public List<AusFile> Files { get; set; } = [];
 
     public IReadOnlyList<AusFile> CheckForUpdates(AusManifest package)
     {
@@ -35,7 +35,8 @@ public partial class AusManifest
 
     public void SaveAs(string filename)
     {
-        var json = JsonSerializer.Serialize(this, JsonSerializerOptionsHelper.SerializerOptions);
+        var json = JsonSerializer.Serialize(this, typeof(AusManifest), ManifestJsonSerializerContext.DefaultContext);
+        //var json = JsonSerializer.Serialize(this, ManifestJsonSerializerContext.Default);
         File.WriteAllText(filename, json);
     }
 

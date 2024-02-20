@@ -5,6 +5,8 @@ namespace AutoUpdates;
 
 public partial class AusManifest
 {
+    static readonly string[] Includes = ["**/*"];
+
     public static async Task<AusManifest> LoadAsync(
         string name,
         Version version,
@@ -13,7 +15,7 @@ public partial class AusManifest
         CancellationToken cancellationToken = default)
     {
         Matcher matcher = new();
-        matcher.AddIncludePatterns(new string[] { "**/*" });
+        matcher.AddIncludePatterns(Includes);
         matcher.AddExcludePatterns(exclusives);
         var filePaths = matcher.GetResultsInFullPath(directory);
 
@@ -45,7 +47,7 @@ public partial class AusManifest
         string[] exclusives)
     {
         Matcher matcher = new();
-        matcher.AddIncludePatterns(new string[] { "**/*" });
+        matcher.AddIncludePatterns(Includes);
         matcher.AddExcludePatterns(exclusives);
         var filePaths = matcher.GetResultsInFullPath(directory);
 
@@ -73,6 +75,6 @@ public partial class AusManifest
             throw new FileNotFoundException(filename);
 
         var json = File.ReadAllText(filename);
-        return JsonSerializer.Deserialize<AusManifest>(json,  JsonSerializerOptionsHelper.SerializerOptions)!;
+        return (AusManifest)JsonSerializer.Deserialize(json, typeof(AusManifest), ManifestJsonSerializerContext.DefaultContext)!;
     }
 }
