@@ -12,7 +12,7 @@ var appsettings = (AppSettings?)JsonSerializer.Deserialize(File.ReadAllText(Path
 
 AusManifest.Load(name, 
     appsettings?.Version ?? new Version(0, 0, 1), 
-    directory, ["appsettings.json"])
+    directory, [])
     .SaveAs(Path.Combine(directory, "manifest.json"));
 
 Console.WriteLine("生成成功");
