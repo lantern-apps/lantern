@@ -4,7 +4,7 @@ namespace Lantern.AsService;
 
 public partial class WebViewBrowser
 {
-    private readonly List<RouteHandler> _routes = new();
+    private readonly List<RouteHandler> _routes = [];
 
     public Task RouteAbortAsync(string urlOrPredicate) => RouteAsync(urlOrPredicate, WebViewResourceType.All, route => route.AbortAsync());
     public Task RouteAbortAsync(string urlOrPredicate, WebViewResourceType resourceType) => RouteAsync(urlOrPredicate, resourceType, route => route.AbortAsync());
@@ -84,24 +84,16 @@ public partial class WebViewBrowser
         }
     }
 
-    private sealed class RouteHandler
+    private sealed class RouteHandler(
+        string urlOrPredicate,
+        WebViewResourceType resourceType,
+        Func<Uri, bool> predicate,
+        Action<WebViewRoute> action)
     {
-        public RouteHandler(
-            string urlOrPredicate,
-            WebViewResourceType resourceType,
-            Func<Uri, bool> predicate,
-            Action<WebViewRoute> action)
-        {
-            UrlOrPredicate = urlOrPredicate;
-            ResourceType = resourceType;
-            Predicate = predicate;
-            Action = action;
-        }
-
-        public string UrlOrPredicate;
-        public WebViewResourceType ResourceType;
-        public readonly Func<Uri, bool> Predicate;
-        public readonly Action<WebViewRoute> Action;
+        public string UrlOrPredicate = urlOrPredicate;
+        public WebViewResourceType ResourceType = resourceType;
+        public readonly Func<Uri, bool> Predicate = predicate;
+        public readonly Action<WebViewRoute> Action = action;
 
     }
 }

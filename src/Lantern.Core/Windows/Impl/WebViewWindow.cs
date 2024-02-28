@@ -220,10 +220,20 @@ public class WebViewWindow : Window, IWebViewWindow
     {
         if (_environmentOptions.IsIsolated)
         {
+            string? udf;
+            if (_environmentOptions.UserDataFolder != null && !string.IsNullOrWhiteSpace(_windowOptions.EnvironmentName))
+            {
+                udf = Path.Combine(_environmentOptions.UserDataFolder, _windowOptions.EnvironmentName);
+            }
+            else
+            {
+                udf = _environmentOptions.UserDataFolder;
+            }
+
             string? arguments = _environmentOptions.AdditionalBrowserArguments;
             if (_windowOptions.ProxyServer != null)
             {
-                if(arguments == null)
+                if (arguments == null)
                 {
                     arguments = $"--proxy-server=\"{_windowOptions.ProxyServer}\"";
                 }
@@ -235,7 +245,7 @@ public class WebViewWindow : Window, IWebViewWindow
 
             _environment = await CoreWebView2Environment.CreateAsync(
                 _environmentOptions.BrowserExecutableFolder,
-                _environmentOptions.UserDataFolder,
+                udf,
                 new CoreWebView2EnvironmentOptions
                 {
                     //#if DEBUG
@@ -273,7 +283,7 @@ public class WebViewWindow : Window, IWebViewWindow
         controllerOptions.IsInPrivateModeEnabled = _windowOptions.IsInPrivateModeEnabled;
         controllerOptions.ScriptLocale = _windowOptions.Language;
 
-         _controller = await _environment.CreateCoreWebView2ControllerAsync(WindowImpl.NativeHandle, controllerOptions);
+        _controller = await _environment.CreateCoreWebView2ControllerAsync(WindowImpl.NativeHandle, controllerOptions);
 
         ResizeWebViewBounds();
         _controller.IsVisible = true;

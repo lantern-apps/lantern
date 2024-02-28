@@ -68,6 +68,7 @@ public class WebViewWindowOptions
 
     public string? ProxyServer { get; set; }
     public string? ProfileName { get; set; }
+    public string? EnvironmentName { get; set; }
     public bool IsInPrivateModeEnabled { get; set; }
     public string? Language { get; set; }
 
