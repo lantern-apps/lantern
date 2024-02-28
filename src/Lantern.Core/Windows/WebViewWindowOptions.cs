@@ -66,6 +66,7 @@ public class WebViewWindowOptions
     [JsonPropertyName("visible")]
     public bool Visible { get; set; } = true;
 
+    public string? ProxyServer { get; set; }
     public string? ProfileName { get; set; }
     public bool IsInPrivateModeEnabled { get; set; }
     public string? Language { get; set; }

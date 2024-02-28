@@ -220,6 +220,19 @@ public class WebViewWindow : Window, IWebViewWindow
     {
         if (_environmentOptions.IsIsolated)
         {
+            string? arguments = _environmentOptions.AdditionalBrowserArguments;
+            if (_windowOptions.ProxyServer != null)
+            {
+                if(arguments == null)
+                {
+                    arguments = $"--proxy-server=\"{_windowOptions.ProxyServer}\"";
+                }
+                else
+                {
+                    arguments += $" --proxy-server=\"{_windowOptions.ProxyServer}\"";
+                }
+            }
+
             _environment = await CoreWebView2Environment.CreateAsync(
                 _environmentOptions.BrowserExecutableFolder,
                 _environmentOptions.UserDataFolder,
@@ -232,7 +245,7 @@ public class WebViewWindow : Window, IWebViewWindow
                     //#endif
 
                     //AdditionalBrowserArguments = "--disable-web-security --proxy-server=\"127.0.0.1:9728\"",
-                    AdditionalBrowserArguments = _environmentOptions.AdditionalBrowserArguments,
+                    AdditionalBrowserArguments = arguments,
                     Language = _windowOptions.Language ?? _environmentOptions.Language,
                     AllowSingleSignOnUsingOSPrimaryAccount = false,
                     IsCustomCrashReportingEnabled = false,
