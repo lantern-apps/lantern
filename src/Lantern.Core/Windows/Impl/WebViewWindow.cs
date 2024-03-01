@@ -260,6 +260,7 @@ public class WebViewWindow : Window, IWebViewWindow
                     AllowSingleSignOnUsingOSPrimaryAccount = false,
                     IsCustomCrashReportingEnabled = false,
                     ExclusiveUserDataFolderAccess = false,
+                    EnableTrackingPrevention = true,
                 });
         }
         else
@@ -274,6 +275,7 @@ public class WebViewWindow : Window, IWebViewWindow
                     AllowSingleSignOnUsingOSPrimaryAccount = false,
                     IsCustomCrashReportingEnabled = false,
                     ExclusiveUserDataFolderAccess = false,
+                    EnableTrackingPrevention = true,
                 });
             _environment = _global_environment;
         }
@@ -282,6 +284,7 @@ public class WebViewWindow : Window, IWebViewWindow
         controllerOptions.ProfileName = _windowOptions.ProfileName;
         controllerOptions.IsInPrivateModeEnabled = _windowOptions.IsInPrivateModeEnabled;
         controllerOptions.ScriptLocale = _windowOptions.Language;
+
 
         _controller = await _environment.CreateCoreWebView2ControllerAsync(WindowImpl.NativeHandle, controllerOptions);
 
@@ -293,6 +296,7 @@ public class WebViewWindow : Window, IWebViewWindow
         _controller.DefaultBackgroundColor = Color.White;
         _controller.AcceleratorKeyPressed += OnWebViewAcceleratorKeyPressed;
 
+        
         _webview = _controller.CoreWebView2;
         _webview.NewWindowRequested += OnWebViewNewWindowRequested;
         _webview.DocumentTitleChanged += OnWebViewDocumentTitleChanged;
@@ -301,6 +305,7 @@ public class WebViewWindow : Window, IWebViewWindow
         _webview.WindowCloseRequested += (o, e) => Close(true);
         _webview.ProcessFailed += (o, e) => Close(true);
 
+        _webview.Profile.PreferredTrackingPreventionLevel = CoreWebView2TrackingPreventionLevel.Strict;
         _webview.Settings.UserAgent = _windowOptions.UserAgent;
         _webview.Settings.AreDefaultContextMenusEnabled = _windowOptions.AreDefaultContextMenusEnabled;
         _webview.Settings.IsZoomControlEnabled = _windowOptions.IsZoomControlEnabled;
