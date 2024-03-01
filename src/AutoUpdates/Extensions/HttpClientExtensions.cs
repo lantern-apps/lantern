@@ -47,12 +47,19 @@ internal static class HttpClientExtensions
     {
         var fileUrl = $"{version}/{name.Replace('\\', '/')}";
 
-        using var response = await httpClient.GetAsync(fileUrl, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-        response.EnsureSuccessStatusCode();
-        var dir = Path.GetDirectoryName(destFilePath)!;
-        Directory.CreateDirectory(dir);
-        using var output = File.Create(destFilePath);
-        await response.Content.CopyToStreamAsync(output, progress, cancellationToken);
+        try
+        {
+            using var response = await httpClient.GetAsync(fileUrl, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            response.EnsureSuccessStatusCode();
+            var dir = Path.GetDirectoryName(destFilePath)!;
+            Directory.CreateDirectory(dir);
+            using var output = File.Create(destFilePath);
+            await response.Content.CopyToStreamAsync(output, progress, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Exception on download file '{name}'", ex);
+        }
     }
 
     private static async Task CopyToStreamAsync(
