@@ -3,6 +3,7 @@ using Lantern.Windows;
 using Microsoft.Extensions.Logging;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Core.DevToolsProtocolExtension;
+using System.Net;
 
 namespace Lantern.AsService;
 
@@ -61,6 +62,15 @@ public sealed partial class WebViewBrowser
             await _webview.CapturePreviewAsync(CoreWebView2CapturePreviewImageFormat.Png, ms);
             ms.Seek(0, SeekOrigin.Begin);
             return ms;
+        });
+    }
+
+    public Task<List<Cookie>> GetCookiesAsync(string uri)
+    {
+        return InvokeAsync(async () =>
+        {
+            var cookies =   await _webview.CookieManager.GetCookiesAsync(uri);
+            return cookies.Select(x => x.ToSystemNetCookie()).ToList();
         });
     }
 
