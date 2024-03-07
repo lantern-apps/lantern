@@ -8,14 +8,21 @@ public partial class WebViewBrowser
 {
     public Task<WebViewHttpResponse> WaitForResponseAsync(string urlOrPredicate, WaitForResponseOptions? options = null)
     {
-        var regex = urlOrPredicate.GlobToRegex();
-        if (regex == null)
-            throw new ArgumentException("Argument invalid", nameof(urlOrPredicate));
-
-        return WaitForResponseAsync(regex, options);
+        return WaitForResponseAsync(urlOrPredicate, null, options);
     }
 
-    public async Task<WebViewHttpResponse> WaitForResponseAsync(Regex urlOrPredicate, WaitForResponseOptions? options = null)
+    public Task<WebViewHttpResponse> WaitForResponseAsync(string urlOrPredicate, string? httpMethod, WaitForResponseOptions? options = null)
+    {
+        var regex = urlOrPredicate.GlobToRegex() ?? throw new ArgumentException("Argument invalid", nameof(urlOrPredicate));
+        return WaitForResponseAsync(regex, httpMethod, options);
+    }
+
+    public Task<WebViewHttpResponse> WaitForResponseAsync(Regex urlOrPredicate, WaitForResponseOptions? options = null)
+    {
+        return WaitForResponseAsync(urlOrPredicate, null, options);
+    }
+
+    public async Task<WebViewHttpResponse> WaitForResponseAsync(Regex urlOrPredicate, string? httpMethod, WaitForResponseOptions? options = null)
     {
         options ??= WaitForResponseOptions.Default;
 
@@ -38,7 +45,7 @@ public partial class WebViewBrowser
                 return;
             }
 
-            if (urlOrPredicate.IsMatch(e.Request.Uri))
+            if ((httpMethod == null || string.Equals(e.Request.Method, httpMethod, StringComparison.OrdinalIgnoreCase)) && urlOrPredicate.IsMatch(e.Request.Uri))
             {
                 Stream? content = null;
                 try
@@ -265,11 +272,18 @@ public partial class WebViewBrowser
         };
     }
 
-
     public Task<WebViewHttpResponse> RunAndWaitForResponseAsync(Action action, string urlOrPredicate, WaitForResponseOptions? options = null)
     {
         options ??= WaitForResponseOptions.Default;
         var waiter = WaitForResponseAsync(urlOrPredicate, options);
+        action();
+        return waiter.WithCancellation(options.Timeout, options.CancellationToken);
+    }
+
+    public Task<WebViewHttpResponse> RunAndWaitForResponseAsync(Action action, string urlOrPredicate, string? httpMethod, WaitForResponseOptions? options = null)
+    {
+        options ??= WaitForResponseOptions.Default;
+        var waiter = WaitForResponseAsync(urlOrPredicate, httpMethod, options);
         action();
         return waiter.WithCancellation(options.Timeout, options.CancellationToken);
     }
@@ -289,7 +303,6 @@ public partial class WebViewBrowser
         action();
         return waiter.WithCancellation(options.Timeout, options.CancellationToken);
     }
-
 
     public async Task<WebViewHttpResponse> RunAndWaitForResponseAsync(Func<Task> action, string urlOrPredicate, WaitForResponseOptions? options = null)
     {
