@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.Web.WebView2.Core;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 
 namespace Lantern.AsService;
@@ -39,6 +41,11 @@ public partial class WebViewBrowser
         }
 
         await InvokeAsync(() => _webview.Navigate(url));
+    }
+
+    public Task NavigateAsync(string url)
+    {
+        return InvokeAsync(() => _webview.Navigate(url));
     }
 
     public async Task<LoadResponse?> GotoAsync(string url, LoadOptions? options = null)
@@ -128,21 +135,14 @@ public partial class WebViewBrowser
 
     private sealed class NavigationStateMachine
     {
-        private sealed class WaitState
+        private sealed class WaitState(
+            WaitUntilState waitUntil,
+            TaskCompletionSource<LoadResponse?> completion,
+            Func<Uri, bool>? predicate)
         {
-            public WaitState(
-                WaitUntilState waitUntil,
-                TaskCompletionSource<LoadResponse?> completion,
-                Func<Uri, bool>? predicate)
-            {
-                WaitUntil = waitUntil;
-                Completion = completion;
-                Predicate = predicate;
-            }
-
-            public readonly WaitUntilState WaitUntil;
-            public readonly TaskCompletionSource<LoadResponse?> Completion;
-            public readonly Func<Uri, bool>? Predicate;
+            public readonly WaitUntilState WaitUntil = waitUntil;
+            public readonly TaskCompletionSource<LoadResponse?> Completion = completion;
+            public readonly Func<Uri, bool>? Predicate = predicate;
             public ulong NavigationId;
 
             public bool IsCompleted =>

@@ -94,6 +94,5 @@ public partial class WebViewBrowser
         public WebViewResourceType ResourceType = resourceType;
         public readonly Func<Uri, bool> Predicate = predicate;
         public readonly Action<WebViewRoute> Action = action;
-
     }
 }
