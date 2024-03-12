@@ -74,9 +74,25 @@ public partial class WebViewBrowser
         return InvokeAsync(() => _webview.ExecuteScriptAsync($"document.querySelector(\"{selector}\")?.click()"));
     }
 
+    public Task ClickParentAsync(string selector)
+    {
+        return InvokeAsync(() => _webview.ExecuteScriptAsync($"document.querySelector(\"{selector}\")?.parentElement?.click()"));
+    }
+
+
     public Task ClickAsync(string frameSelector, string selector)
     {
         return InvokeAsync(() => _webview.ExecuteScriptAsync($"document.querySelector(\"{frameSelector}\")?.contentDocument?.querySelector(\"{selector}\")?.click()"));
+    }
+
+    public Task ScrollToButtomAsync(string selector)
+    {
+        return InvokeAsync(() => _webview.ExecuteScriptAsync($"document.querySelector(\"{selector}\")?.scrollBy(0,9999)"));
+    }
+
+    public Task ScrollByAsync(string selector, int x, int y)
+    {
+        return InvokeAsync(() => _webview.ExecuteScriptAsync($"document.querySelector(\"{selector}\")?.scrollBy({x},{y})"));
     }
 
     public Task FillAsync(string selector, string content)
@@ -178,6 +194,8 @@ public readonly struct DomRect
     public double Y { get; init; }
     public double Width { get; init; }
     public double Height { get; init; }
+
+    public bool IsEmpty => Top == 0 && Left == 0 && Width == 0 && Height == 0;
 
     public DomPoint GetCenter() => new()
     {
