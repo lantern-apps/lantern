@@ -47,18 +47,32 @@ internal static class HttpClientExtensions
     {
         var fileUrl = $"{version}/{name.Replace('\\', '/')}";
 
-        try
+        var dir = Path.GetDirectoryName(destFilePath)!;
+        Directory.CreateDirectory(dir);
+
+        for (int i = 0; i < 3; i++)
         {
-            using var response = await httpClient.GetAsync(fileUrl, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-            response.EnsureSuccessStatusCode();
-            var dir = Path.GetDirectoryName(destFilePath)!;
-            Directory.CreateDirectory(dir);
-            using var output = File.Create(destFilePath);
-            await response.Content.CopyToStreamAsync(output, progress, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"Exception on download file '{name}'", ex);
+            try
+            {
+                using var response = await httpClient.GetAsync(fileUrl, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+                response.EnsureSuccessStatusCode();
+                using var output = File.Create(destFilePath);
+                await response.Content.CopyToStreamAsync(output, progress, cancellationToken);
+                return;
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.BadGateway)
+                {
+                    continue;
+                }
+
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Exception on download file '{name}'", ex);
+            }
         }
     }
 
