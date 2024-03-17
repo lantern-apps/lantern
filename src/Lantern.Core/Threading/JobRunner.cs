@@ -2,17 +2,10 @@
 
 namespace Lantern.Threading;
 
-internal class JobRunner
+internal class JobRunner(IPlatformThreadingInterface? platform)
 {
-    private readonly IPlatformThreadingInterface? _platform;
-
     private readonly Queue<IJob>[] _queues = Enumerable.Range(0, (int)DispatcherPriority.MaxValue + 1)
         .Select(_ => new Queue<IJob>()).ToArray();
-
-    public JobRunner(IPlatformThreadingInterface? platform)
-    {
-        _platform = platform;
-    }
 
     /// <summary>
     /// Runs continuations pushed on the loop.
@@ -89,7 +82,7 @@ internal class JobRunner
             queue.Enqueue(job);
         }
         if (needWake)
-            _platform?.Signal(job.Priority);
+            platform?.Signal(job.Priority);
     }
 
     private IJob? GetNextJob(DispatcherPriority minimumPriority)
