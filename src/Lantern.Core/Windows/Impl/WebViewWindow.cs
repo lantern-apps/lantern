@@ -220,16 +220,7 @@ public class WebViewWindow : Window, IWebViewWindow
     {
         if (_environmentOptions.IsIsolated)
         {
-            string? udf;
-            if (_environmentOptions.UserDataFolder != null && !string.IsNullOrWhiteSpace(_windowOptions.EnvironmentName))
-            {
-                udf = Path.Combine(_environmentOptions.UserDataFolder, _windowOptions.EnvironmentName);
-            }
-            else
-            {
-                udf = _environmentOptions.UserDataFolder;
-            }
-
+            string? udf = _windowOptions.UserDataFolder ?? _environmentOptions.UserDataFolder;
             string? arguments = _environmentOptions.AdditionalBrowserArguments;
             if (_windowOptions.ProxyServer != null)
             {
@@ -296,7 +287,7 @@ public class WebViewWindow : Window, IWebViewWindow
         _controller.DefaultBackgroundColor = Color.White;
         _controller.AcceleratorKeyPressed += OnWebViewAcceleratorKeyPressed;
 
-        
+
         _webview = _controller.CoreWebView2;
         _webview.NewWindowRequested += OnWebViewNewWindowRequested;
         _webview.DocumentTitleChanged += OnWebViewDocumentTitleChanged;
